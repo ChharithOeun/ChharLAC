@@ -1,0 +1,23 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+.idea/
+
+# LAC settings (per-toon, don't ship)
+profiles/*/settings.xml
+profiles/*/_backup/
+profiles/*/*.bak
+
+# Never commit auth or per-player identity
+*.pat
+*.token
+.env
+secrets.json
+
+# Windows script residue
+*.log
+*.tmp
