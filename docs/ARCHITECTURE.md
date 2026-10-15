@@ -14,7 +14,7 @@ Chharizard-LAC/
 │   ├── COMMANDS.md        # /lac fwd command reference
 │   └── SUBJOB-FEATURES.md # per-subjob automation notes
 └── profiles/
-    └── CHAR_PID/         # renamed by SETUP.ps1
+    └── _template/         # renamed by SETUP.ps1
         ├── subjob_features.lua    # shared automation library
         ├── _TEMPLATE.lua          # starter for future jobs
         ├── WAR.lua ... SCH.lua    # 22 job profiles

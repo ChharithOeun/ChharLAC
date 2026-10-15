@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ashita>
+    <addon>
+        <name>chharmaton</name>
+        <author>Chharizard</author>
+        <description>Visual elemental orbs for PUP maneuvers. Sidecar for ChharMaton visual sidecar for PUP.</description>
+        <version>1.0.0</version>
+        <commands>
+            <command>
+                <name>/chharmaton</name>
+                <description>Toggle, configure the orb HUD</description>
+            </command>
+        </commands>
+    </addon>
+</ashita>
