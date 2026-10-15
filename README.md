@@ -13,7 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-cyan.svg?style=for-the-badge)](LICENSE)
 [![Server: Horizon](https://img.shields.io/badge/Horizon-XI-ff6b35?style=for-the-badge)](https://horizonxi.com)
 [![Server: Phoenix](https://img.shields.io/badge/Phoenix-XI-ff5f87?style=for-the-badge)](https://phoenix-xi.com)
-[![LAC: v2.12](https://img.shields.io/badge/LuAshitaCast-v2.12%2B-ffd700?style=for-the-badge)](https://github.com/ThornyFFXI/LuAshitacast)
+[![LAC: v2.12](https://img.shields.io/badge/LuAshitaCast-v2.12%2B-ffd700?style=for-the-badge)]()
 [![Jobs: 22](https://img.shields.io/badge/jobs-22%20profiles-00ffff?style=for-the-badge)]()
 
 **All 22 FFXI job profiles for Ashita v4 LuAshitaCast, wired to a shared subjob-automation library.**
@@ -86,6 +86,5 @@ Verify your server's TOS before enabling anything, and enable one feature at a t
 
 ## Credits
 
-Framework: [Thorny's LuAshitaCast](https://github.com/ThornyFFXI/LuAshitacast)
-Author: Chharith / ChharithOeun
+Built by Chharizard.
 License: MIT
