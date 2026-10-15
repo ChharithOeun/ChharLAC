@@ -1,0 +1,20 @@
+/console lac fwd am toggle
+AM
+/console lac fwd mode Melee
+Melee
+/console lac fwd mode Tank
+Tank
+/console lac fwd mode Ranged
+Ranged
+/console lac fwd mode Nuke
+Nuke
+/console lac fwd mode Heal
+Heal
+/console lac fwd repair toggle
+Repair
+/console lac fwd hud
+HUD
+/console lac fwd burden
+Burden
+/console lac fwd config
+Config
