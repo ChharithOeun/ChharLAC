@@ -6,7 +6,8 @@ param(
     [string]$PlayerId = "",
     [ValidateSet("horizon","phoenix","retail","")]
     [string]$Server = "",
-    [switch]$Force
+    [switch]$Force,
+    [switch]$SkipOrbs    # skip the ChharMaton visual sidecar install
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,7 +20,7 @@ Write-Host ""
 
 $repoRoot   = $PSScriptRoot
 $profileDir = Join-Path $repoRoot "profiles"
-$default    = Join-Path $profileDir "Chharizard_190378"
+$default    = Join-Path $profileDir "_template"
 
 if (-not (Test-Path $default)) {
     Write-Host "ERROR: Cannot find $default." -ForegroundColor Red
@@ -69,7 +70,7 @@ $newFolder = "${CharacterName}_${PlayerId}"
 $newPath   = Join-Path $profileDir $newFolder
 
 Write-Host ""
-Write-Host "Renaming Chharizard_190378 -> $newFolder..." -ForegroundColor Cyan
+Write-Host "Renaming _template -> $newFolder..." -ForegroundColor Cyan
 
 if (Test-Path $newPath) {
     if (-not $Force) {
@@ -86,7 +87,7 @@ Write-Host "Rewriting dofile paths and server profile in .lua files..." -Foregro
 $luaFiles = Get-ChildItem -Path $newPath -Filter "*.lua" -Recurse
 foreach ($f in $luaFiles) {
     $content = Get-Content $f.FullName -Raw
-    $updated = $content -replace 'Chharizard_190378', $newFolder
+    $updated = $content -replace '_template', $newFolder
     # Bake in the chosen server as the default (only affects subjob_features.lua)
     $updated = $updated -replace 'M\.server = "horizon";', ("M.server = `"$Server`";")
     if ($content -ne $updated) {
@@ -96,7 +97,30 @@ foreach ($f in $luaFiles) {
 }
 
 Write-Host ""
-Write-Host "Done!" -ForegroundColor Green
+Write-Host "Done with LAC profiles!" -ForegroundColor Green
+Write-Host ""
+
+# ---------------------------------------------------------------------------
+# Optional: ChharMaton visual sidecar for PUP (requires git on PATH)
+# ---------------------------------------------------------------------------
+$orbsScript = Join-Path $repoRoot "INSTALL-CHHARMATON.ps1"
+if (-not $SkipOrbs -and (Test-Path $orbsScript)) {
+    Write-Host "ChharMaton is a PUP visual-orbs sidecar." -ForegroundColor Cyan
+    Write-Host "It auto-loads with the PUP profile and draws elemental maneuver orbs."
+    Write-Host "Requires git on PATH. Pulls the latest upstream build + rebrands."
+    $ans = Read-Host "Install ChharMaton now? [Y/n]"
+    if ($ans -eq '' -or $ans -match '^[Yy]') {
+        try {
+            & $orbsScript
+        } catch {
+            Write-Host "ChharMaton install failed: $($_.Exception.Message)" -ForegroundColor Yellow
+            Write-Host "You can retry later with: .\INSTALL-CHHARMATON.ps1" -ForegroundColor Yellow
+        }
+    } else {
+        Write-Host "Skipped. Run .\INSTALL-CHHARMATON.ps1 any time to install." -ForegroundColor Gray
+    }
+}
+
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "  1. Copy $newPath"

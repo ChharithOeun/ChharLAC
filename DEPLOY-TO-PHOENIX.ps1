@@ -13,16 +13,17 @@ param(
     [string]$CharacterName = "",
     [string]$PlayerId = "",
     [string]$PhoenixPath = "",
-    [switch]$Force
+    [switch]$Force,
+    [switch]$SkipOrbs
 )
 
 $ErrorActionPreference = "Stop"
 $repoRoot    = $PSScriptRoot
-$sourceDir   = Join-Path $repoRoot "profiles\Chharizard_190378"
+$sourceDir   = Join-Path $repoRoot "profiles\_template"
 
 if (-not (Test-Path $sourceDir)) {
     Write-Host "ERROR: Source profile folder not found at $sourceDir" -ForegroundColor Red
-    Write-Host "Run SETUP.ps1 first, or restore the Chharizard_190378 folder." -ForegroundColor Yellow
+    Write-Host "Run SETUP.ps1 first, or restore the _template folder." -ForegroundColor Yellow
     exit 1
 }
 
@@ -203,7 +204,7 @@ $luaFiles = Get-ChildItem -Path $destPath -Filter "*.lua" -Recurse
 $patched = 0
 foreach ($f in $luaFiles) {
     $content = Get-Content $f.FullName -Raw
-    $updated = $content -replace 'Chharizard_190378', $destFolderName
+    $updated = $content -replace '_template', $destFolderName
     $updated = $updated -replace 'M\.server = "horizon";', 'M.server = "phoenix";'
     if ($content -ne $updated) {
         [System.IO.File]::WriteAllText($f.FullName, $updated)
@@ -229,3 +230,18 @@ Write-Host "  4. Verify server flag:  /lac fwd subdebug"
 Write-Host ""
 Write-Host "Note: SCH and DNC profiles will warn-on-load (WoTG not yet on Phoenix)." -ForegroundColor Yellow
 Write-Host ""
+
+# ChharMaton visual sidecar install (optional) --------------------------------
+$orbsScript = Join-Path $repoRoot "INSTALL-CHHARMATON.ps1"
+if (-not $SkipOrbs -and (Test-Path $orbsScript)) {
+    $phoenixRoot = Split-Path (Split-Path (Split-Path $destPath -Parent) -Parent) -Parent
+    Write-Host "Install ChharMaton (PUP visual orb sidecar) into Phoenix now? [Y/n]" -ForegroundColor Cyan
+    $ans = Read-Host
+    if ($ans -eq '' -or $ans -match '^[Yy]') {
+        try {
+            & $orbsScript -AshitaRoot $phoenixRoot
+        } catch {
+            Write-Host "ChharMaton install failed: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+    }
+}

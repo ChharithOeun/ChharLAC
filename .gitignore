@@ -18,6 +18,15 @@ profiles/*/*.bak
 .env
 secrets.json
 
+# Per-character profile folders (Name_PlayerID pattern) must never be
+# published. Only the generic profiles/_template/ ships in the repo;
+# SETUP.ps1 clones it to a local character folder that stays gitignored.
+profiles/*_[0-9]*/
+!profiles/_template/
+
 # Windows script residue
 *.log
 *.tmp
+
+# Local-only convenience launchers (not for publication)
+PUSH.bat

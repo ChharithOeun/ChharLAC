@@ -34,9 +34,11 @@ Era-progressive gear (RSE → HQ crafted → mission → salvage/nyzul/limbus fo
 
 - **`_TEMPLATE.lua`** — canonical starter for future jobs, already wired to Sub
 
-- **`SETUP.ps1`** — one-time: prompts for character name + player ID + server, bakes everything in
+- **`SETUP.ps1`** — one-time: prompts for character name + player ID + server, bakes everything in. Offers to install the ChharMaton sidecar at the end.
 
-- **`DEPLOY-TO-PHOENIX.ps1`** — one-click copy from Horizon install path → Phoenix install path, auto-detects your character folders
+- **`DEPLOY-TO-PHOENIX.ps1`** — one-click copy from Horizon install path → Phoenix install path, auto-detects your character folders. Also offers the ChharMaton sidecar for Phoenix.
+
+- **`INSTALL-CHHARMATON.ps1`** — standalone installer for the ChharMaton visual-orb sidecar for PUP. Clones the upstream MIT-licensed project (jonhouchens/ArcaneAutomata), rebrands identifiers to ChharMaton, preserves the original LICENSE and attribution, and drops it into every Ashita install it finds. PUP.lua auto-loads/unloads it on profile load. Pass `-SkipOrbs` to the setup scripts to decline it, or re-run this installer any time.
 
 ---
 
