@@ -426,17 +426,36 @@ local function renderHUD()
     safeText(string.format('Thresh %d   Decay %d/3s%s',
         B.threshold, B.decay_rate, flag));
 
-    -- Orb row: each orb in its own element color, laid out via SameLine so
-    -- they render horizontally. Falls back cleanly on any imgui binding.
-    local orbs = {};
-    for e, c in pairs(B.burden) do
-        if (c and c > 0) then table.insert(orbs, e); end
+    -- Orb row: color by ACTUAL player maneuver buffs (same source ChharMaton
+    -- reads), so the two HUDs stay in sync.  If buff memory is unreadable
+    -- for any reason, fall back to the burden counter so we at least show
+    -- SOMETHING colored instead of all-gray.
+    local MAN_BUFF_IDS = {
+        [300]='fire',    [301]='ice',   [302]='wind',    [303]='earth',
+        [304]='thunder', [305]='water', [306]='light',   [307]='dark',
+    };
+    local activeElems = {};
+    local player = AshitaCore:GetMemoryManager():GetPlayer();
+    if (player and player.GetBuff) then
+        for i = 0, 31 do
+            local ok, id = pcall(player.GetBuff, player, i);
+            if (ok and id) then
+                local e = MAN_BUFF_IDS[id];
+                if (e) then activeElems[#activeElems + 1] = e; end
+            end
+        end
     end
-    table.sort(orbs, function(a, b)
-        return (B.burden[a] or 0) > (B.burden[b] or 0);
-    end);
+    -- Fallback: nothing read -> use burden counters so the row isn't blank.
+    if (#activeElems == 0) then
+        for e, c in pairs(B.burden) do
+            if (c and c > 0) then activeElems[#activeElems + 1] = e; end
+        end
+        table.sort(activeElems, function(a, b)
+            return (B.burden[a] or 0) > (B.burden[b] or 0);
+        end);
+    end
     for i = 1, 3 do
-        local e = orbs[i];
+        local e = activeElems[i];
         if (e) then
             safeText('@', ELEM_COLOR[e]);
         else
