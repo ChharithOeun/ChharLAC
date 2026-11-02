@@ -417,7 +417,17 @@ function M.selfIndex()
     return AshitaCore:GetMemoryManager():GetParty():GetMemberTargetIndex(0);
 end
 
-function M.selfTp() return AshitaCore:GetMemoryManager():GetPlayer():GetMainJobTP() or 0; end
+function M.selfTp()
+    -- Ashita doesn't expose TP on the Player object; it lives on the Party
+    -- struct (same place as HP/MP).  Use GetMemberTP(0) for self like we
+    -- do for HP/MP above.
+    local okP, party = pcall(function()
+        return AshitaCore:GetMemoryManager():GetParty();
+    end);
+    if (not okP or not party) then return 0; end
+    local okT, tp = pcall(party.GetMemberTP, party, 0);
+    return (okT and tp) or 0;
+end
 function M.selfHpPct() return AshitaCore:GetMemoryManager():GetParty():GetMemberHPPercent(0) or 100; end
 function M.selfMpPct() return AshitaCore:GetMemoryManager():GetParty():GetMemberMPPercent(0) or 100; end
 function M.amEngaged() return gData.GetPlayer().Status == 'Engaged'; end
@@ -910,6 +920,11 @@ local chharmatonLoaded = nil;   -- nil = unknown, true/false = tracked
 local function syncChharmaton()
     local main = (M.mainJob() or ''):upper();
     local sub  = (M.subJob()  or ''):upper();
+    -- Zone-transition guard: Ashita's party struct briefly reads empty while
+    -- zoning in. If we trusted that empty read we'd unload chharmaton every
+    -- zone (shouldLoad=false while sub was really PUP) and reload on the next
+    -- tick. Skip the sync entirely until job data is populated.
+    if (main == '' or sub == '') then return; end
     -- PUP main is already handled by PUP.lua's OnLoad/OnUnload; don't fight it.
     if (main == 'PUP') then return; end
     local shouldLoad = (sub == 'PUP');
@@ -925,6 +940,19 @@ end
 function M.tick(active)
     if (not active) then return; end
     pcall(syncChharmaton);
+    -- Healing/resting gate: don't tick auto-abilities while /heal'd. The game
+    -- refuses every /ja and /ma with "You cannot use that command while
+    -- healing." and we'd spam the error every tick. Raw status from Ashita
+    -- memory manager: 34 = Resting. (LAC's wrapper resolves to 'Resting';
+    -- subjob_features uses the raw int path so we don't take a dep on gData.)
+    local okPl, ply = pcall(function() return AshitaCore:GetMemoryManager():GetPlayer(); end);
+    if (okPl and ply) then
+        local okE, ent = pcall(function() return AshitaCore:GetMemoryManager():GetEntity(); end);
+        if (okE and ent) then
+            local idx = ply:GetTargetIndex();
+            if (idx and ent:GetStatus(idx) == 34) then return; end   -- 34 = Resting
+        end
+    end
     -- Tier 1: tank/melee
     M.tickWar(); M.tickMnk(); M.tickPld(); M.tickDrk(); M.tickThf();
     -- Tier 2: support/hybrid

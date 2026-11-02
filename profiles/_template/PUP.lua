@@ -38,27 +38,27 @@
 local profile = {};
 local sets = {};
 profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
-local Burden = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/pup_burden.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
+local Burden = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/pup_burden.lua');
 
 -- ---------------------------------------------------------------------------
 -- Runtime config -- edit these OR change via /lac fwd commands.
 -- ---------------------------------------------------------------------------
 local cfg = {
-    autoManeuvers = true,   -- master toggle; default ON (per user preference)
+    autoManeuvers = false,   -- master toggle; default ON (per user preference)
     autoCooldown  = true,   -- auto-fire Cooldown JA when Overload hits
-    autoRepair    = false,  -- auto Repair ability when pet HP drops
+    autoRepair    = true,  -- auto Repair ability when pet HP drops
     autoHeal      = false,  -- auto-use oils on pet (item-based last-resort)
     petHpThreshold= 50,     -- % pet HP that triggers OIL use
     deactivatehpp = 85,     -- % pet HP that triggers REPAIR (Selindril)
-    preset        = 'harle',-- NAMED preset -- harle/blm/whm/rdm/tank/turtle/meva/rng/rngtank/lvl60
-    mode          = 'Melee',-- (legacy fallback -- only used if preset is empty and head/frame unset)
+    preset        = 'rng',-- NAMED preset -- harle/blm/whm/rdm/tank/turtle/meva/rng/rngtank/lvl60
+    mode          = 'ranged',-- (legacy fallback -- only used if preset is empty and head/frame unset)
     head          = '',     -- (legacy manual override)
     frame         = '',     -- (legacy manual override)
     overdrive     = false,  -- toggle: Overdrive mindset (Wind-heavy for Sharpshot bursts)
     forceWS       = false,  -- toggle: WS-window override (fires forcing element 70-99% TP)
     chharControl  = true,   -- toggle: auto-load/unload ChharControl sidecart with PUP.lua
-    petOilHp      = 'Automat. Oil +3',  -- HP restore item
+    petOilHp      = 'Automat. Oil +2',  -- HP restore item
 };
 
 -- ---------------------------------------------------------------------------
@@ -87,7 +87,7 @@ local cfg = {
 -- ---------------------------------------------------------------------------
 local manPatterns = {
     Melee        = { fire=2, light=1 },
-    Ranged       = { wind=1, fire=1, light=1 },
+    Ranged       = { thunder=2, fire=1 },     -- duplicate-key form dropped to {t=1,f=1}; use count form
     HybridRanged = { fire=1, light=1, thunder=1 },
     Tank         = { earth=2, light=1 },
     LightTank    = { earth=1, light=1, water=1 },
@@ -100,7 +100,7 @@ local manPatterns = {
 local headToPattern = {
     Valoredge   = { earth=2, light=1,                wsForce='dark'    },
     Harlequin   = { fire=1,  light=1, earth=1                          },
-    Sharpshot   = { wind=1,  fire=1, thunder=1,      wsForce='thunder' },
+    Sharpshot   = { thunder=1,  fire=1, thunder=1   		  		},
     Stormwaker  = { ice=1,   dark=1, light=1                           },
     Soulsoother = { light=2, dark=1                                    },
     Spiritreaver= { dark=2,  light=1                                   },
@@ -155,8 +155,10 @@ local presets = {
     },
     rng = {
         head='Sharpshot', frame='Sharpshot',
-        pattern={ wind=2, fire=1 }, wsForce='thunder',
-        desc='Sharpshot + Sharpshot -- wind/wind/fire + Thunder @ WS (Daze force)',
+        -- NOTE: Lua tables can't repeat keys. {thunder=1,fire=1,thunder=1}
+        -- silently becomes {thunder=1,fire=1}. For 2x thunder, use thunder=2.
+        pattern={ thunder=2, fire=1 },
+        desc='Sharpshot + Sharpshot -- thunder/thunder/fire (interleaved: T-F-T)',
     },
     rngtank = {
         head='Valoredge', frame='Sharpshot',
@@ -504,7 +506,7 @@ end
 -- Automation (AutoPUP-model: buff-count driven, real recasts, overload-safe)
 -- ============================================================================
 
--- Returns a map of buff_id → count of that buff currently active on us.
+-- Returns a map of buff_id â†’ count of that buff currently active on us.
 -- Count matters because maneuvers can stack to the same ID (same element
 -- fired twice = count 2).
 local function readBuffs()
@@ -598,8 +600,20 @@ local firesByElem    = {};   -- elem -> list of os.time() of recent fires
 -- Only re-fire the SAME element when it's near expiry (base buff = 60s).
 -- Firing earlier causes stacked long-remaining buffs that overload Burden.
 -- This is the Selindrles / AutoPUP model: trust buff count, don't age-refresh.
-local MIN_SAME_ELEM_GAP = 55;   -- was 12 (overload bug); near-expiry refresh only
+-- MIN_SAME_ELEM_GAP: don't re-fire the SAME element until this many seconds
+-- have passed since last fire. Phoenix source confirms base maneuver duration
+-- is 60s (scripts/globals/automaton.lua: clamp(MANEUVER_DURATION, 60, 300)).
+-- At 55s elapsed the buff has ~5s left -- re-fire slots in cleanly. The
+-- "pops with 20s left" case the user saw is normal when pattern wants N>1
+-- of an element: two staggered buffs are both of that element at different
+-- remaining times. That's intentional sliding-window behavior, not a bug.
+local MIN_SAME_ELEM_GAP = 55;   -- base-60s buff, re-fire at near-expiry
 local MIN_ANY_FIRE_GAP  = 20;   -- was 12; stretch pacing so 3 fires span 60s
+-- MIN_PRIME_GAP: during PRIMING (stack hasn't reached `want` yet), don't fire
+-- the same element twice in close succession. Interleaving across elements
+-- (fire-thunder-fire instead of fire-fire-thunder) halves burden accumulation
+-- per element in the critical first 30s.
+local MIN_PRIME_GAP = 25;       -- was hardcoded 12 inline
 -- Debounce flaky buff reads: require 2 consecutive ticks of (have < want)
 -- before trusting a wearoff.  Blocks single-tick packet jitter from firing.
 local WEAROFF_CONFIRM_TICKS = 2;
@@ -699,20 +713,33 @@ local function nextManeuverNeeded(buffs, pet)
     -- fire gap allows another queue -- lets BLM (ice=2) prime to 2 without
     -- needing a wearoff event.
     if (not worn) then
+        -- INTERLEAVE: instead of iterating fire -> ice -> ... -> dark in fixed
+        -- order (which produces fire-fire-thunder for pattern {fire=2,thunder=1}),
+        -- score every eligible element and pick the one that LEAST recently
+        -- fired. Ties broken by largest deficit (want - have). Result:
+        -- fire-thunder-fire -- same total maneuvers, half the per-element
+        -- burden stacking in the first 30 seconds.
+        local best, bestScore = nil, -math.huge;
         for _, elem in ipairs({'fire','ice','wind','earth','thunder','water','light','dark'}) do
             local want = effPattern[elem];
             if (want) then
                 local have    = (buffs[MAN_BUFF[elem]] or 0) + inflightOf(elem);
                 local sinceEl = now - (lastFiredAt[elem] or 0);
                 local priming = not everReached[elem];
-                -- Keep per-element gap >= JA recast (12s) so we don't
-                -- hammer the same element on consecutive ticks.
-                if (have < want and priming and sinceEl >= 12
+                if (have < want and priming and sinceEl >= MIN_PRIME_GAP
                     and Burden.canFire(elem)) then
-                    worn = elem; break;
+                    -- Score = seconds since last fire (bigger = older = pick first).
+                    -- A small tiebreaker of deficit*0.5 prefers larger gaps when
+                    -- recency is similar; keeps the fire=2 case eventually filling.
+                    local deficit = want - have;
+                    local score = sinceEl + (deficit * 0.5);
+                    if (score > bestScore) then
+                        best, bestScore = elem, score;
+                    end
                 end
             end
         end
+        worn = best;
     end
 
     return worn;
@@ -764,15 +791,35 @@ ashita.events.register('text_in', 'pup_text_track', function(e)
 end);
 
 -- Query the game's own recast timer for an ability (seconds remaining).
--- Returns 0 (ready) on any error so we fail-open rather than freeze.
+--
+-- Ashita's API quirk: GetAbilityTimer(idx) takes a SLOT INDEX (0-31), not
+-- the recast-timer-id. Previously we were passing rid directly, which is
+-- always an invalid slot (210, 114, 115) and silently returned 0 "ready".
+-- Result: /ja Repair fired every tick while the real recast was ticking
+-- down 2+ minutes -> "Unable to use job ability. Time left:" spam.
+--
+-- Correct pattern (lifted from chharmaton.lua line 506-507):
+--   iterate slots 0..31, find the one whose GetAbilityTimerId matches our
+--   target rid, read its GetAbilityTimer, divide by 60 to get seconds.
 local function recastRemaining(rid)
     local ok, r = pcall(function()
         return AshitaCore:GetMemoryManager():GetRecast()
     end);
     if (not ok or not r) then return 0; end
-    local ok2, t = pcall(r.GetAbilityTimer, r, rid);
-    if (not ok2 or not t) then return 0; end
-    return t;
+    for slot = 0, 31 do
+        local okId, slotRid = pcall(r.GetAbilityTimerId, r, slot);
+        if (okId and slotRid == rid) then
+            local okT, raw = pcall(r.GetAbilityTimer, r, slot);
+            if (okT and raw) then
+                return math.max(0, raw / 60);   -- raw is in frames (1/60s)
+            end
+            return 0;
+        end
+    end
+    -- Rid not found in any slot -> ability not learned / not equipped.
+    -- Fail CLOSED (return large value) so autoRepair/autoCooldown don't
+    -- fire for abilities we don't have. Was fail-open before.
+    return 999;
 end
 
 local function recastReady(rid)
@@ -801,6 +848,15 @@ local lastHealTime = 0;
 
 profile._autoTick = function()
     if (gProfile ~= profile) then return; end
+    -- Status gate: don't queue ANY auto-commands while /heal'd. Game refuses
+    -- every /ja and /ma with "You cannot use that command while healing" and
+    -- the tick would spam it once per second. LAC's gData.GetPlayer().Status
+    -- is a STRING resolved from constants.EntityStatus; healing/resting = 34
+    -- resolves to 'Resting'. Also check the raw int + Engaged recast lockouts.
+    local okPl, ply = pcall(gData.GetPlayer);
+    if (okPl and ply and (ply.Status == 'Resting' or ply.Status == 34)) then
+        return;
+    end
     -- Refresh Kenkonken (overload-immunity) detection from current equip.
     -- Pass the whole table through -- updateSafeMode handles name OR id match.
     local okEq, equip = pcall(gData.GetEquipment);
@@ -929,7 +985,7 @@ profile.HandleCommand = function(args)
     if (Sub.handleCommand(args)) then return; end
     local sub = args[1]:lower();
 
-    -- Small helper: on|off|toggle → new bool
+    -- Small helper: on|off|toggle â†’ new bool
     local function tri(flag, word)
         if (word == 'on')  then return true;  end
         if (word == 'off') then return false; end
