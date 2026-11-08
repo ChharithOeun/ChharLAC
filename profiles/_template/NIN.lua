@@ -4,22 +4,22 @@ local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Ch
 
 sets.Idle = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Suppanomimi", Ear2="Ethereal Earring",
-    Body="Hachiya Chainmail +1", Hands="Iga Tekko +1", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
-    Back="Amemet Mantle +1", Waist="Warwolf Belt", Legs="Byakko's Haidate", Feet="Iga Kyahan +1",
-    Main="Kagenui", Sub="Bloody Bolts", Ammo="Fire Bomblet",
+    Body="Hachiya Chainmail", Hands="Ninja Tekko", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
+    Back="Amemet Mantle +1", Waist="Warwolf Belt", Legs="Byakko's Haidate", Feet="Ninja Kyahan",
+    Main="Kikoku", Sub="Bloody Bolts", Ammo="Fire Bomblet",
 };
 sets.Movement = { Feet="Rutter Sabatons" };
 sets.TP = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Brutal Earring", Ear2="Suppanomimi",
-    Body="Hachiya Chainmail +1", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Sniper's Ring",
+    Body="Hachiya Chainmail", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Sniper's Ring",
     Back="Cerberus Mantle", Waist="Swift Belt", Legs="Byakko's Haidate", Feet="Homam Gambieras",
-    Main="Kagenui", Sub="Kanjizai",
+    Main="Kikoku", Sub="Destroyers",
 };
 
 sets.WS = {};
 sets.WS.Default = {
     Head="Optical Hat", Neck="Peacock Amulet", Ear1="Brutal Earring", Ear2="Merman's Earring",
-    Body="Hachiya Chainmail +1", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Woodsman Ring",
+    Body="Hachiya Chainmail", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Woodsman Ring",
     Back="Cerberus Mantle", Waist="Warwolf Belt", Legs="Byakko's Haidate", Feet="Rutter Sabatons",
 };
 sets.WS["Blade: Jin"]   = sets.WS.Default;
@@ -31,20 +31,20 @@ sets.WS["Blade: Hi"]    = sets.WS.Default;
 
 sets.JA = {};
 sets.JA["Mijin Gakure"]  = { Feet="Ninja Kyahan" };
-sets.JA["Futae"]         = { Hands="Iga Tekko +1" };
-sets.JA["Sange"]         = { Legs="Iga Hakama +1" };
-sets.JA["Yonin"]         = { Body="Hachiya Chainmail +1" };
-sets.JA["Innin"]         = { Head="Iga Zukin +1" };
+sets.JA["Futae"]         = { Hands="Ninja Tekko" };
+sets.JA["Sange"]         = { Legs="Ninja Hakama" };
+sets.JA["Yonin"]         = { Body="Hachiya Chainmail" };
+sets.JA["Innin"]         = { Head="Ninja Hatsuburi" };
 
 sets.Precast = {
-    FastCast = { Head="Walahra Turban", Ear2="Loquac. Earring", Body="Hachiya Chainmail +1", Hands="Iga Tekko +1", Legs="Iga Hakama +1" },
-    Utsusemi = { Head="Walahra Turban", Neck="Magoraga Beads", Ear2="Loquac. Earring", Feet="Iga Kyahan +1" },
+    FastCast = { Head="Walahra Turban", Ear2="Loquac. Earring", Body="Hachiya Chainmail", Hands="Ninja Tekko", Legs="Ninja Hakama" },
+    Utsusemi = { Head="Walahra Turban", Neck="Magoraga Beads", Ear2="Loquac. Earring", Feet="Ninja Kyahan" },
 };
 sets.Midcast = {
-    Ninjutsu       = { Head="Iga Zukin +1", Neck="Uggalepih Pendant", Body="Hachiya Chainmail +1", Hands="Hachiya Tekko +1", Feet="Iga Kyahan +1" },
-    NinjutsuDmg    = { Neck="Uggalepih Pendant", Hands="Hachiya Tekko +1" },
-    NinjutsuEnfeeb = { Hands="Hachiya Tekko +1", Feet="Iga Kyahan +1" },
-    Utsusemi       = { Neck="Magoraga Beads", Ear2="Loquac. Earring", Feet="Iga Kyahan +1" },
+    Ninjutsu       = { Head="Ninja Hatsuburi", Neck="Uggalepih Pendant", Body="Hachiya Chainmail", Hands="Hachiya Tekko", Feet="Ninja Kyahan" },
+    NinjutsuDmg    = { Neck="Uggalepih Pendant", Hands="Hachiya Tekko" },
+    NinjutsuEnfeeb = { Hands="Hachiya Tekko", Feet="Ninja Kyahan" },
+    Utsusemi       = { Neck="Magoraga Beads", Ear2="Loquac. Earring", Feet="Ninja Kyahan" },
     Cure           = {},
 };
 

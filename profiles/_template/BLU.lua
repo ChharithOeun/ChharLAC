@@ -4,7 +4,7 @@ local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Ch
 
 sets.Idle = {
     Head="Walahra Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Snow Ear",
-    Body="Magus Jubbah", Hands="Magus Bazubands", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
+    Body="Scout's Jerkin", Hands="Scout's Bracers", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
     Back="Rainbow Cape", Waist="Warwolf Belt", Legs="Homam Cosciales", Feet="Homam Gambieras",
     Main="Joyeuse", Sub="Genbu's Shield", Ammo="Fire Bomblet",
 };
@@ -27,21 +27,21 @@ sets.WS["Vorpal Blade"]   = sets.WS.Default;
 sets.WS["Savage Blade"]   = sets.WS.Default;
 sets.WS["Requiescat"]     = sets.WS.Default;
 
-sets.Precast = { FastCast = { Head="Magus Keffiyeh", Ear1="Loquac. Earring", Body="Magus Jubbah", Hands="Magus Bazubands" } };
+sets.Precast = { FastCast = { Head="Scout's Beret", Ear1="Loquac. Earring", Body="Scout's Jerkin", Hands="Scout's Bracers" } };
 sets.Midcast = {
-    BlueMagic     = { Head="Magus Keffiyeh", Neck="Uggalepih Pendant", Body="Magus Jubbah", Hands="Magus Bazubands", Legs="Magus Shalwar", Feet="Magus Charuqs" },
+    BlueMagic     = { Head="Scout's Beret", Neck="Uggalepih Pendant", Body="Scout's Jerkin", Hands="Scout's Bracers", Legs="Scout's Braccae", Feet="Scout's Socks" },
     BlueMagicPhys = { Neck="Chivalrous Chain", Body="Homam Corazza", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Woodsman Ring", Back="Cerberus Mantle", Waist="Warwolf Belt", Legs="Byakko's Haidate" },
-    BlueMagicMag  = { Neck="Uggalepih Pendant", Body="Igqira Weskit", Hands="Yigit Gages", Feet="Yigit Crackows" },
-    BlueMagicHeal = { Neck="Colossus's Torque", Body="Magus Jubbah", Hands="Magus Bazubands" },
+    BlueMagicMag  = { Neck="Uggalepih Pendant", Body="Igqira Weskit", Hands="Summoner's Bracers", Feet="Summoner's Pigaches" },
+    BlueMagicHeal = { Neck="Colossus's Torque", Body="Scout's Jerkin", Hands="Scout's Bracers" },
     Cure          = { Body="Dalmatica" },
     Utsusemi      = { Head="Walahra Turban" },
 };
 
 sets.JA = {};
-sets.JA["Burst Affinity"]  = { Feet="Magus Charuqs" };
-sets.JA["Chain Affinity"]  = { Head="Magus Keffiyeh", Feet="Assimilator's Charuqs" };
-sets.JA["Efflux"]          = { Legs="Magus Shalwar" };
-sets.JA["Azure Lore"]      = { Hands="Magus Bazubands" };
+sets.JA["Burst Affinity"]  = { Feet="Scout's Socks" };
+sets.JA["Chain Affinity"]  = { Head="Scout's Beret", Feet="Mirage Charuqs" };
+sets.JA["Efflux"]          = { Legs="Scout's Braccae" };
+sets.JA["Azure Lore"]      = { Hands="Scout's Bracers" };
 
 profile.OnLoad = function() gSettings.AllowAddSet=true; Sub.echo("[Chharizard BLU] loaded."); end
 profile.OnUnload = function() Sub.echo("[Chharizard BLU] unloaded."); end

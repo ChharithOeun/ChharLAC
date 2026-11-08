@@ -249,7 +249,7 @@ sets.Midcast.Cannonball     = { Neck = "Chivalrous Chain" };   -- hate spike WS-
 sets.Midcast["Actinic Burst"] = sets.Midcast.Flash;            -- AoE Flash-like
 
 -- Utsusemi (if /NIN)
-sets.Midcast.Utsusemi = { Head = "Walahra Turban", Feet = "Yigit Crackows" };
+sets.Midcast.Utsusemi = { Head = "Walahra Turban", Feet = "Summoner's Pigaches" };
 
 -- ============================================================================
 -- Event handlers

@@ -52,7 +52,7 @@ sets.JA["Provoke"]     = { Neck="Chivalrous Chain", Ring1="Wivre Ring" };
 
 sets.Precast = { FastCast = { Ear2="Loquac. Earring", Body="Homam Corazza" } };
 sets.Midcast = {
-    Utsusemi = { Head="Walahra Turban", Feet="Yigit Crackows" },
+    Utsusemi = { Head="Walahra Turban", Feet="Summoner's Pigaches" },
     Enhancing= {},
     Cure     = {},
 };

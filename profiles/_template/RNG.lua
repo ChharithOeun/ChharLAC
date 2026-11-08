@@ -32,9 +32,9 @@
 --   - Head: Optical Hat, Bison Warbonnet (Rapid Shot), Empress Hairpin (HP)
 --   - Neck: Peacock Amulet, Peacock Charm, Uggalepih Pendant (magic)
 --   - Body: Scorpion Harness, Hachiryu Haramaki +1
---   - Hands: Adaman Mufflers (Slug Shot dmg), Yigit Gages (TP), Ryl.Ftm. Gloves (Barrage)
---   - Legs: Yigit Seraweels, Byakko's Haidate, Coronal Squares
---   - Feet: Yigit Crackows, Rutter Sabatons
+--   - Hands: Adaman Mufflers (Slug Shot dmg), Summoner's Bracers (TP), Ryl.Ftm. Gloves (Barrage)
+--   - Legs: Scout's Braccae, Byakko's Haidate, Coronal Squares
+--   - Feet: Summoner's Pigaches, Rutter Sabatons
 --   - Waist: Life Belt (base), Scout's Belt (STR), Swift Belt (haste+2)
 --   - Back: Amemet Mantle +1, Cerberus Mantle (STR/Crit)
 --   - Rings: Rajas Ring, Toreador's Ring, Sniper's Ring +1
@@ -122,12 +122,12 @@ sets.Idle = {
     Ear1    = "Drone Earring",
     Ear2    = "Volley Earring",
     Body    = "Scorpion Harness",    -- DEX/AGI/HP
-    Hands   = "Yigit Gages",         -- Store TP + Ranged Acc
+    Hands   = "Summoner's Bracers",         -- Store TP + Ranged Acc
     Ring1   = "Rajas Ring",
     Ring2   = "Toreador's Ring",     -- Ranged Acc
     Back    = "Amemet Mantle +1",
     Waist   = "Life Belt",
-    Legs    = "Yigit Seraweels",     -- Store TP
+    Legs    = "Scout's Braccae",     -- Store TP
     Feet    = "Rutter Sabatons",     -- movement speed
     -- Range and Ammo left OFF idle so you keep whatever you had
 };
@@ -146,13 +146,13 @@ sets.TP = {
     Ear1    = "Drone Earring",
     Ear2    = "Volley Earring",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Sniper's Ring",
     Back    = "Amemet Mantle +1",
     Waist   = "Swift Belt",
     Legs    = "Byakko's Haidate",    -- Haste
-    Feet    = "Yigit Crackows",
+    Feet    = "Summoner's Pigaches",
 };
 
 -- ---------------------------------------------------------------------------
@@ -165,13 +165,13 @@ sets.Preshot = {
     Ear1    = "Volley Earring",      -- +Rapid Shot
     Ear2    = "Volley Earring",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",         -- +Snapshot
+    Hands   = "Summoner's Bracers",         -- +Snapshot
     Ring1   = "Puissance Ring",      -- if available
     Ring2   = "Toreador's Ring",
     Back    = "Amemet Mantle +1",
     Waist   = "Swift Belt",          -- +2% Ranged Haste
-    Legs    = "Yigit Seraweels",
-    Feet    = "Yigit Crackows",
+    Legs    = "Scout's Braccae",
+    Feet    = "Summoner's Pigaches",
 };
 
 -- ---------------------------------------------------------------------------
@@ -184,7 +184,7 @@ sets.Midshot = {
     Ear1    = "Drone Earring",       -- Ranged Attack +5
     Ear2    = "Volley Earring",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Toreador's Ring",
     Back    = "Amemet Mantle +1",
@@ -206,8 +206,8 @@ sets.MidshotAcc = {
     Ring2   = "Longshot Ring",       -- if you have it
     Back    = "Amemet Mantle +1",
     Waist   = "Life Belt",
-    Legs    = "Yigit Seraweels",
-    Feet    = "Yigit Crackows",
+    Legs    = "Scout's Braccae",
+    Feet    = "Summoner's Pigaches",
 };
 
 -- Sleep-pull mode: fire a Sleep Arrow to pull safely.
@@ -218,7 +218,7 @@ sets.MidshotSleep = {
     Head    = "Optical Hat",
     Neck    = "Peacock Amulet",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Toreador's Ring",
     Back    = "Amemet Mantle +1",
@@ -233,7 +233,7 @@ sets.MidshotDef = {
     Head    = "Optical Hat",
     Neck    = "Peacock Amulet",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Toreador's Ring",
     Back    = "Amemet Mantle +1",
@@ -254,7 +254,7 @@ sets.MidshotBolt = {                 -- basic bolt TP (mode: 'Bolt')
     Ammo = ammo.TP_Bolt,             -- "Bolt"
     Head = "Optical Hat", Neck = "Peacock Amulet",
     Ear1 = "Drone Earring", Ear2 = "Volley Earring",
-    Body = "Scorpion Harness", Hands = "Yigit Gages",
+    Body = "Scorpion Harness", Hands = "Summoner's Bracers",
     Ring1 = "Rajas Ring", Ring2 = "Toreador's Ring",
     Back = "Amemet Mantle +1", Waist = "Life Belt",
     Legs = "Byakko's Haidate", Feet = "Rutter Sabatons",
@@ -264,7 +264,7 @@ sets.MidshotBlind = {                -- blind proc (mode: 'Blind')
     Ammo = ammo.Blind,               -- "Blind Bolt"
     Head = "Optical Hat", Neck = "Peacock Amulet",
     Ear1 = "Drone Earring", Ear2 = "Volley Earring",
-    Body = "Scorpion Harness", Hands = "Yigit Gages",
+    Body = "Scorpion Harness", Hands = "Summoner's Bracers",
     Ring1 = "Rajas Ring", Ring2 = "Toreador's Ring",
     Back = "Amemet Mantle +1", Waist = "Life Belt",
     Legs = "Byakko's Haidate", Feet = "Rutter Sabatons",
@@ -274,7 +274,7 @@ sets.MidshotAcid = {                 -- DEF-down proc via crossbow (mode: 'Acid'
     Ammo = ammo.Acid,                -- "Acid Bolt"
     Head = "Optical Hat", Neck = "Peacock Amulet",
     Ear1 = "Drone Earring", Ear2 = "Volley Earring",
-    Body = "Scorpion Harness", Hands = "Yigit Gages",
+    Body = "Scorpion Harness", Hands = "Summoner's Bracers",
     Ring1 = "Rajas Ring", Ring2 = "Toreador's Ring",
     Back = "Amemet Mantle +1", Waist = "Life Belt",
     Legs = "Byakko's Haidate", Feet = "Rutter Sabatons",
@@ -284,7 +284,7 @@ sets.MidshotBloody = {               -- HP drain (mode: 'Bloody')
     Ammo = ammo.Bloody,              -- "Bloody Bolt"
     Head = "Optical Hat", Neck = "Peacock Amulet",
     Ear1 = "Drone Earring", Ear2 = "Volley Earring",
-    Body = "Scorpion Harness", Hands = "Yigit Gages",
+    Body = "Scorpion Harness", Hands = "Summoner's Bracers",
     Ring1 = "Rajas Ring", Ring2 = "Toreador's Ring",
     Back = "Amemet Mantle +1", Waist = "Life Belt",
     Legs = "Byakko's Haidate", Feet = "Rutter Sabatons",
@@ -294,7 +294,7 @@ sets.MidshotSleepBolt = {            -- crossbow sleep (mode: 'SleepBolt')
     Ammo = ammo.SleepBolt,           -- "Sleep Bolt"
     Head = "Optical Hat", Neck = "Peacock Amulet",
     Ear1 = "Drone Earring", Ear2 = "Volley Earring",
-    Body = "Scorpion Harness", Hands = "Yigit Gages",
+    Body = "Scorpion Harness", Hands = "Summoner's Bracers",
     Ring1 = "Rajas Ring", Ring2 = "Toreador's Ring",
     Back = "Amemet Mantle +1", Waist = "Life Belt",
     Legs = "Byakko's Haidate", Feet = "Rutter Sabatons",
@@ -319,7 +319,7 @@ sets.WS["Slug Shot"] = {
     Back    = "Cerberus Mantle",     -- STR / Crit
     Waist   = "Scout's Belt",        -- STR
     Legs    = "Byakko's Haidate",
-    Feet    = "Yigit Crackows",
+    Feet    = "Summoner's Pigaches",
 };
 
 -- Sidewinder -- AGI-based, 40% AGI mod
@@ -330,13 +330,13 @@ sets.WS["Sidewinder"] = {
     Ear1    = "Drone Earring",
     Ear2    = "Volley Earring",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Sniper's Ring",
     Back    = "Amemet Mantle +1",    -- AGI / Ranged Attack
     Waist   = "Scout's Belt",
-    Legs    = "Yigit Seraweels",
-    Feet    = "Yigit Crackows",
+    Legs    = "Scout's Braccae",
+    Feet    = "Summoner's Pigaches",
 };
 
 -- Detonator -- 30% AGI mod (shares Sidewinder gear)
@@ -385,7 +385,7 @@ sets.Precast.FastCast = {
 sets.Midcast = {};
 sets.Midcast.Utsusemi = {
     Head    = "Walahra Turban",      -- fast cast
-    Feet    = "Yigit Crackows",
+    Feet    = "Summoner's Pigaches",
 };
 
 sets.Midcast.Healing = {

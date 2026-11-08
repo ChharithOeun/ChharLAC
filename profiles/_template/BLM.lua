@@ -3,17 +3,17 @@ local profile = {}; local sets = {}; profile.Sets = sets;
 local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
-    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Novia Earring",
-    Body="Igqira Weskit", Hands="Yigit Gages", Ring1="Ether Ring", Ring2="Star Ring",
+    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
+    Body="Igqira Weskit", Hands="Summoner's Bracers", Ring1="Ether Ring", Ring2="Star Ring",
     Back="Rainbow Cape", Waist="Sacro Cord", Legs="Nashira Seraweels", Feet="Herald's Gaiters",
-    Main="Chatoyant Staff", Sub="Vivid Strap", Ammo="Clarus Stone",
+    Main="Chatoyant Staff", Sub="Caster's Cesti",
 };
 sets.Movement = { Feet="Herald's Gaiters" };
-sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Ring1="Dark Ring", Waist="Austerity Belt" };
+sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Ring1="Dark Ring", Waist="Penitent's Rope" };
 sets.TP = sets.Idle;
 
 sets.Precast = {
-    FastCast = { Ear1="Loquac. Earring", Body="Yigit Gomlek", Hands="Yigit Gages", Legs="Nashira Seraweels" },
+    FastCast = { Ear1="Loquac. Earring", Body="Summoner's Doublet", Hands="Summoner's Bracers", Legs="Nashira Seraweels" },
 };
 
 -- Elemental staves table -- LAC will swap based on element
@@ -24,18 +24,18 @@ local staff = {
 
 sets.Midcast = {
     Elemental = {
-        Head="Nahtirah Hat", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
-        Body="Igqira Weskit", Hands="Yigit Gages", Ring1="Snow Ring", Ring2="Star Ring",
-        Back="Bat Cape", Waist="Sacro Cord", Legs="Igqira Lappas", Feet="Yigit Crackows",
+        Head="Walahra Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
+        Body="Igqira Weskit", Hands="Summoner's Bracers", Ring1="Snow Ring", Ring2="Star Ring",
+        Back="Bat Cape", Waist="Sacro Cord", Legs="Igqira Lappas", Feet="Summoner's Pigaches",
     },
-    Enfeebling = { Neck="Uggalepih Pendant", Body="Igqira Weskit", Feet="Yigit Crackows" },
+    Enfeebling = { Neck="Uggalepih Pendant", Body="Igqira Weskit", Feet="Summoner's Pigaches" },
     Enhancing  = { Neck="Colossus's Torque", Body="Nashira Manteel", Hands="Nashira Gages" },
-    Dark       = { Head="Nashira Turban", Body="Igqira Weskit", Hands="Yigit Gages" },  -- Drain/Aspir
+    Dark       = { Head="Nashira Turban", Body="Igqira Weskit", Hands="Summoner's Bracers" },  -- Drain/Aspir
     Cure       = { Body="Dalmatica", Legs="Nashira Seraweels" },
     Utsusemi   = { Head="Walahra Turban" },
 };
 
-sets.WS = { Default = { Head="Nahtirah Hat", Body="Igqira Weskit" } };
+sets.WS = { Default = { Head="Walahra Turban", Body="Igqira Weskit" } };
 
 sets.JA = {};
 sets.JA["Manafont"]        = { Body="Sorcerer's Coat" };

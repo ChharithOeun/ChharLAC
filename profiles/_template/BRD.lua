@@ -44,20 +44,20 @@ local verbose   = false;
 -- IDLE sets -- base + sub-states
 -- ---------------------------------------------------------------------------
 sets.Idle = {
-    Head="Aoidos' Calot +1", Neck="Aoidos' Matinee", Ear1="Loquac. Earring", Ear2="Musical Earring",
-    Body="Aoidos' Hongreline +2", Hands="Aoidos' Manchettes +2", Ring1="Sniper's Ring", Ring2="Star Ring",
-    Back="Rainbow Cape", Waist="Corsette +1", Legs="Aoidos' Rhingrave +2", Feet="Aoidos' Cothurnes +2",
+    Head="Bard's Roundlet", Neck="Flute Belt", Ear1="Loquac. Earring", Ear2="Musical Earring",
+    Body="Bard's Jstcorps", Hands="Bard's Cuffs", Ring1="Sniper's Ring", Ring2="Star Ring",
+    Back="Rainbow Cape", Waist="Corsette +1", Legs="Bard's Cannions", Feet="Bard's Slippers",
     Main="Joyeuse", Sub="Genbu's Shield",
     -- Range intentionally omitted here -- resolver injects idleRange below.
-    Ammo="Clarus Stone",
+    
 };
 -- Sub-states layer on top of Idle (separate table -- Core resolver reads here,
 -- so sets.Idle stays pure equipment keys and EquipSet(sets.Idle) iterates clean).
 sets.IdleStates = {
     Field   = {},
-    Town    = { Body="Councilor's Garb" },                            -- CP+ in town (if owned)
+    Town    = { Body="Cleric's Briault" },                            -- CP+ in town (if owned)
     DT      = { Head="Gnadbhod's Helm", Body="Mekira-oi" },           -- -DT emphasis
-    Refresh = { Neck="Twilight Torque", Body="Aoidos' Hongreline +2" },
+    Refresh = { Neck="Justice Torque", Body="Bard's Jstcorps" },
 };
 
 -- Movement overlay (applied by resolver when IsMoving)
@@ -66,7 +66,7 @@ sets.Movement = { Feet="Rutter Sabatons" };
 -- Defense overlays (applied when DefenseMode != None)
 sets.Defense = {
     PDT = { Head="Gnadbhod's Helm", Body="Mekira-oi", Hands="Dusk Gloves +1", Legs="Byakko's Haidate" },
-    MDT = { Head="Walahra Turban",  Neck="Twilight Torque", Body="Mekira-oi" },
+    MDT = { Head="Walahra Turban",  Neck="Justice Torque", Body="Mekira-oi" },
 };
 
 -- ---------------------------------------------------------------------------
@@ -74,7 +74,7 @@ sets.Defense = {
 -- ---------------------------------------------------------------------------
 sets.TP = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Brutal Earring", Ear2="Suppanomimi",
-    Body="Aoidos' Hongreline +2", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Sniper's Ring",
+    Body="Bard's Jstcorps", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Sniper's Ring",
     Back="Cerberus Mantle", Waist="Swift Belt", Legs="Byakko's Haidate", Feet="Homam Gambieras",
     Main="Joyeuse", Sub="Genbu's Shield",
     -- Range intentionally omitted -- keep whatever idle resolved to.
@@ -89,7 +89,7 @@ sets.TPModes = {
 -- Hybrid overlays (toggled with /lac mode hybrid)
 sets.Hybrid = {
     PDT     = { Head="Gnadbhod's Helm", Body="Mekira-oi" },
-    Reraise = { Head="Twilight Helm", Body="Twilight Mail" },
+    Reraise = { Head="Reraise Hairpin", Body="Reraise Gorget" },
 };
 
 -- ---------------------------------------------------------------------------
@@ -97,47 +97,47 @@ sets.Hybrid = {
 -- ---------------------------------------------------------------------------
 sets.Precast = {
     FastCast = {
-        Head="Aoidos' Calot +1", Ear1="Loquac. Earring",
-        Body="Aoidos' Hongreline +2", Hands="Aoidos' Manchettes +2",
-        Legs="Aoidos' Rhingrave +2",
+        Head="Bard's Roundlet", Ear1="Loquac. Earring",
+        Body="Bard's Jstcorps", Hands="Bard's Cuffs",
+        Legs="Bard's Cannions",
         -- Range omitted: don't swap during precast, let midcast handle it.
     },
     -- Per-skill overlay (walks spell.Skill):
-    ['Singing']           = { Legs="Fili Rhingrave" },      -- +song precast if owned
+    ['Singing']           = { Legs="Bard's Cannions" },      -- +song precast if owned
     -- Per-spell overlays (walk spell.Name):
     ['Honor March']       = { Range="Marsyas" },
-    ['Sleep']             = { Head="Nahtirah Hat" },
-    ['Sleep II']          = { Head="Nahtirah Hat" },
+    ['Sleep']             = { Head="Walahra Turban" },
+    ['Sleep II']          = { Head="Walahra Turban" },
 };
 
 -- ---------------------------------------------------------------------------
 -- MIDCAST -- per-skill, per-name, SIRD, CastingMode overlays
 -- ---------------------------------------------------------------------------
 sets.Midcast = {
-    Default = { Head="Aoidos' Calot +1", Body="Aoidos' Hongreline +2" },
+    Default = { Head="Bard's Roundlet", Body="Bard's Jstcorps" },
 
     -- Per-skill (spell.Skill):
-    ['Singing']            = { Head="Aoidos' Calot +1", Neck="Aoidos' Matinee",
-                                Ear1="Musical Earring", Body="Aoidos' Hongreline +2",
-                                Hands="Aoidos' Manchettes +2", Legs="Aoidos' Rhingrave +2",
-                                Feet="Aoidos' Cothurnes +2" },
-    ['Enfeebling Magic']   = { Neck="Uggalepih Pendant", Head="Nahtirah Hat" },
-    ['Healing Magic']      = { Body="Aoidos' Hongreline +2" },
+    ['Singing']            = { Head="Bard's Roundlet", Neck="Flute Belt",
+                                Ear1="Musical Earring", Body="Bard's Jstcorps",
+                                Hands="Bard's Cuffs", Legs="Bard's Cannions",
+                                Feet="Bard's Slippers" },
+    ['Enfeebling Magic']   = { Neck="Uggalepih Pendant", Head="Walahra Turban" },
+    ['Healing Magic']      = { Body="Bard's Jstcorps" },
 
     -- Per-spell (spell.Name):
-    ['Cure']               = { Body="Aoidos' Hongreline +2" },
-    ['Cure II']            = { Body="Aoidos' Hongreline +2" },
-    ['Cure III']           = { Body="Aoidos' Hongreline +2" },
+    ['Cure']               = { Body="Bard's Jstcorps" },
+    ['Cure II']            = { Body="Bard's Jstcorps" },
+    ['Cure III']           = { Body="Bard's Jstcorps" },
     ['Utsusemi: Ichi']     = { Head="Walahra Turban" },
     ['Utsusemi: Ni']       = { Head="Walahra Turban" },
 
     -- CastingMode overlays (/lac mode casting MB -> uses sets.Midcast.MB):
-    MB   = { Head="Nahtirah Hat", Neck="Stoicheion Medal", Ring1="Strendu Ring",
+    MB   = { Head="Walahra Turban", Neck="Stoicheion Medal", Ring1="Strendu Ring",
              Ring2="Icesoul Ring" },
 
     -- Auto-applied by Core when hit while casting:
-    SIRD = { Head="Nahtirah Hat", Body="Mekira-oi", Hands="Dusk Gloves +1",
-             Legs="Byakko's Haidate", Ring1="Evanescence Ring" },
+    SIRD = { Head="Walahra Turban", Body="Mekira-oi", Hands="Dusk Gloves +1",
+             Legs="Byakko's Haidate", Ring1="Dark Ring" },
 };
 
 -- ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ sets.Midcast = {
 sets.WS = {};
 sets.WS.Default = {
     Head="Optical Hat", Neck="Peacock Amulet", Ear1="Brutal Earring", Ear2="Merman's Earring",
-    Body="Aoidos' Hongreline +2", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Woodsman Ring",
+    Body="Bard's Jstcorps", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Woodsman Ring",
     Back="Cerberus Mantle", Waist="Warwolf Belt", Legs="Byakko's Haidate", Feet="Rutter Sabatons",
     Main="Joyeuse",
 };
@@ -163,9 +163,9 @@ sets.WS.Mod  = { Head="Optical Hat", Hands="Enkidu's Mittens", Ring2="Woodsman R
 -- Job abilities
 -- ---------------------------------------------------------------------------
 sets.JA = {
-    ["Nightingale"]  = { Feet="Aoidos' Cothurnes +2" },
-    ["Troubadour"]   = { Body="Aoidos' Hongreline +2" },
-    ["Soul Voice"]   = { Body="Aoidos' Hongreline +2" },
+    ["Nightingale"]  = { Feet="Bard's Slippers" },
+    ["Troubadour"]   = { Body="Bard's Jstcorps" },
+    ["Soul Voice"]   = { Body="Bard's Jstcorps" },
     ["Pianissimo"]   = {},
 };
 

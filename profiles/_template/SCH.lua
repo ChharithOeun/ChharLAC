@@ -3,46 +3,46 @@ local profile = {}; local sets = {}; profile.Sets = sets;
 local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
-    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Novia Earring",
-    Body="Argute Gown", Hands="Argute Bracers", Ring1="Ether Ring", Ring2="Star Ring",
+    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
+    Body="Scholar's Gown", Hands="Scholar's Bracers", Ring1="Ether Ring", Ring2="Star Ring",
     Back="Rainbow Cape", Waist="Sacro Cord", Legs="Nashira Seraweels", Feet="Herald's Gaiters",
-    Main="Chatoyant Staff", Sub="Vivid Strap", Ammo="Clarus Stone",
+    Main="Chatoyant Staff", Sub="Caster's Cesti",
 };
 sets.Movement = { Feet="Herald's Gaiters" };
-sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Waist="Austerity Belt" };
+sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Waist="Penitent's Rope" };
 sets.TP = sets.Idle;
 
 sets.Precast = {
-    FastCast = { Ear1="Loquac. Earring", Body="Argute Gown", Legs="Nashira Seraweels" },
+    FastCast = { Ear1="Loquac. Earring", Body="Scholar's Gown", Legs="Nashira Seraweels" },
 };
 sets.Midcast = {
-    Cure       = { Head="Argute Mortarboard", Neck="Phalaina Locket", Body="Argute Gown",
-                   Hands="Argute Bracers", Legs="Argute Pants", Feet="Argute Loafers" },
-    Enhancing  = { Head="Argute Mortarboard", Neck="Colossus's Torque", Body="Argute Gown" },
-    Enfeebling = { Head="Argute Mortarboard", Neck="Uggalepih Pendant", Body="Argute Gown" },
-    Elemental  = { Head="Argute Mortarboard", Neck="Uggalepih Pendant", Body="Argute Gown",
-                   Hands="Argute Bracers", Ring1="Snow Ring", Legs="Argute Pants" },
-    Dark       = { Head="Argute Mortarboard", Body="Argute Gown" },
+    Cure       = { Head="Scholar's Mortarboard", Neck="Phalaina Locket", Body="Scholar's Gown",
+                   Hands="Scholar's Bracers", Legs="Scholar's Pants", Feet="Scholar's Loafers" },
+    Enhancing  = { Head="Scholar's Mortarboard", Neck="Colossus's Torque", Body="Scholar's Gown" },
+    Enfeebling = { Head="Scholar's Mortarboard", Neck="Uggalepih Pendant", Body="Scholar's Gown" },
+    Elemental  = { Head="Scholar's Mortarboard", Neck="Uggalepih Pendant", Body="Scholar's Gown",
+                   Hands="Scholar's Bracers", Ring1="Snow Ring", Legs="Scholar's Pants" },
+    Dark       = { Head="Scholar's Mortarboard", Body="Scholar's Gown" },
     Divine     = { Neck="Uggalepih Pendant" },
-    Helix      = { Head="Argute Mortarboard", Body="Argute Gown", Hands="Argute Bracers" },
+    Helix      = { Head="Scholar's Mortarboard", Body="Scholar's Gown", Hands="Scholar's Bracers" },
     Utsusemi   = { Head="Walahra Turban" },
 };
 
-sets.WS = { Default = { Head="Argute Mortarboard", Body="Argute Gown" } };
+sets.WS = { Default = { Head="Scholar's Mortarboard", Body="Scholar's Gown" } };
 
 sets.JA = {};
-sets.JA["Light Arts"]     = { Body="Argute Gown" };
-sets.JA["Dark Arts"]      = { Body="Argute Gown" };
-sets.JA["Sublimation"]    = { Head="Argute Mortarboard" };
-sets.JA["Tabula Rasa"]    = { Legs="Argute Pants" };
-sets.JA["Enlightenment"]  = { Body="Argute Gown" };
+sets.JA["Light Arts"]     = { Body="Scholar's Gown" };
+sets.JA["Dark Arts"]      = { Body="Scholar's Gown" };
+sets.JA["Sublimation"]    = { Head="Scholar's Mortarboard" };
+sets.JA["Tabula Rasa"]    = { Legs="Scholar's Pants" };
+sets.JA["Enlightenment"]  = { Body="Scholar's Gown" };
 -- Stratagems (free arts; gear doesn't matter but keep hook)
-sets.JA["Penury"]      = { Legs="Argute Pants" };
-sets.JA["Parsimony"]   = { Legs="Argute Pants" };
-sets.JA["Celerity"]    = { Feet="Argute Loafers" };
-sets.JA["Alacrity"]    = { Feet="Argute Loafers" };
-sets.JA["Rapture"]     = { Head="Argute Mortarboard" };
-sets.JA["Ebullience"]  = { Head="Argute Mortarboard" };
+sets.JA["Penury"]      = { Legs="Scholar's Pants" };
+sets.JA["Parsimony"]   = { Legs="Scholar's Pants" };
+sets.JA["Celerity"]    = { Feet="Scholar's Loafers" };
+sets.JA["Alacrity"]    = { Feet="Scholar's Loafers" };
+sets.JA["Rapture"]     = { Head="Scholar's Mortarboard" };
+sets.JA["Ebullience"]  = { Head="Scholar's Mortarboard" };
 
 profile.OnLoad = function()
     gSettings.AllowAddSet = true;

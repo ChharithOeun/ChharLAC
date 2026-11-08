@@ -6,7 +6,7 @@ sets.Idle = {
     Head="Empress Hairpin", Neck="Peacock Amulet", Ear1="Merman's Earring", Ear2="Ethereal Earring",
     Body="Assassin's Vest", Hands="Assassin's Armlets +1", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
     Back="Amemet Mantle +1", Waist="Warwolf Belt", Legs="Homam Cosciales", Feet="Homam Gambieras",
-    Main="Mandau", Sub="Kila", Ammo="Fire Bomblet",
+    Main="Mandau", Sub="Mandau", Ammo="Fire Bomblet",
 };
 sets.Movement = { Feet="Rutter Sabatons" };
 sets.TP = {

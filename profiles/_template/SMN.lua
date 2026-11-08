@@ -4,24 +4,24 @@ local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Ch
 local Avatar = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/smn_avatar.lua');
 
 sets.Idle = {
-    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Novia Earring",
-    Body="Yigit Gomlek", Hands="Yigit Gages", Ring1="Ether Ring", Ring2="Star Ring",
+    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
+    Body="Summoner's Doublet", Hands="Summoner's Bracers", Ring1="Ether Ring", Ring2="Star Ring",
     Back="Summoner's Doublet", Waist="Sacro Cord", Legs="Nashira Seraweels", Feet="Herald's Gaiters",
-    Main="Chatoyant Staff", Sub="Vivid Strap", Ammo="Clarus Stone",
+    Main="Chatoyant Staff", Sub="Caster's Cesti",
 };
 sets.Movement = { Feet="Herald's Gaiters" };
-sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Waist="Austerity Belt" };
+sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Waist="Penitent's Rope" };
 sets.TP = sets.Idle;
 
 -- Pet perpetuation reduction
 sets.Perp = {
     Head="Summoner's Horn", Body="Summoner's Doublet", Hands="Summoner's Bracers", Legs="Summoner's Spats", Feet="Summoner's Pigaches",
-    Ring1="Sattva Ring", Waist="Sagacity Belt",
+    Ring1="Sattva Ring", Waist="Warlock's Sash",
 };
 
-sets.Precast = { FastCast = { Ear1="Loquac. Earring", Body="Yigit Gomlek" } };
+sets.Precast = { FastCast = { Ear1="Loquac. Earring", Body="Summoner's Doublet" } };
 sets.Midcast = {
-    BloodPactRage = { Head="Summoner's Horn", Neck="Astral Aria", Body="Summoner's Doublet",
+    BloodPactRage = { Head="Summoner's Horn", Neck="Summoner's Horn", Body="Summoner's Doublet",
                       Hands="Summoner's Bracers", Legs="Summoner's Spats", Feet="Summoner's Pigaches" },
     BloodPactWard = { Head="Summoner's Horn", Body="Summoner's Doublet", Hands="Summoner's Bracers" },
     Cure          = { Body="Dalmatica" },
@@ -29,7 +29,7 @@ sets.Midcast = {
     Utsusemi      = { Head="Walahra Turban" },
 };
 
-sets.WS = { Default = { Head="Nashira Turban", Body="Yigit Gomlek" } };
+sets.WS = { Default = { Head="Nashira Turban", Body="Summoner's Doublet" } };
 
 sets.JA = {};
 sets.JA["Astral Flow"] = { Feet="Summoner's Pigaches" };

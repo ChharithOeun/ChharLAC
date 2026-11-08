@@ -288,7 +288,7 @@ sets.Idle = {
     Neck    = "Peacock Amulet",
     Ear1    = "Merman's Earring",
     Ear2    = "Puppetry Earring",     -- Automaton skill
-    Body    = "Yigit Gomlek",
+    Body    = "Summoner's Doublet",
     Hands   = "Puppetry Dastanas",
     Ring1   = "Rajas Ring",
     Ring2   = "Puppetmaster's Ring",  -- Automaton skill
@@ -305,14 +305,14 @@ sets.TP = {
     Neck    = "Peacock Amulet",
     Ear1    = "Merman's Earring",
     Ear2    = "Assault Earring",
-    Body    = "Yigit Gomlek",
-    Hands   = "Yigit Gages",
+    Body    = "Summoner's Doublet",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Sniper's Ring",
     Back    = "Amemet Mantle +1",
     Waist   = "Swift Belt",
-    Legs    = "Yigit Seraweels",
-    Feet    = "Yigit Crackows",
+    Legs    = "Pantin Churidars",
+    Feet    = "Summoner's Pigaches",
 };
 
 -- WS sets -- Victory Smite (MNK sub), Raging Fists, or H2H staples
@@ -323,13 +323,13 @@ sets.WS.Default = {
     Ear1    = "Merman's Earring",
     Ear2    = "Assault Earring",
     Body    = "Scorpion Harness",
-    Hands   = "Yigit Gages",
+    Hands   = "Summoner's Bracers",
     Ring1   = "Rajas Ring",
     Ring2   = "Sniper's Ring",
     Back    = "Cerberus Mantle",     -- STR / Crit
     Waist   = "Warwolf Belt",
     Legs    = "Byakko's Haidate",
-    Feet    = "Yigit Crackows",
+    Feet    = "Summoner's Pigaches",
 };
 sets.WS["Victory Smite"] = sets.WS.Default;
 sets.WS["Raging Fists"]  = sets.WS.Default;
@@ -370,7 +370,7 @@ sets.Precast.FastCast = {
 };
 
 sets.Midcast = {};
-sets.Midcast.Utsusemi = { Head = "Walahra Turban", Feet = "Yigit Crackows" };
+sets.Midcast.Utsusemi = { Head = "Walahra Turban", Feet = "Summoner's Pigaches" };
 sets.Midcast.Healing  = { Ring1 = "Ether Ring" };
 
 -- ---------------------------------------------------------------------------
@@ -381,16 +381,16 @@ sets.Midcast.Healing  = { Ring1 = "Ether Ring" };
 sets.PetTP = {                       -- pet melee attack, worn constantly while pet engaged
     Head    = "Puppetry Tobe",       -- Pet: Attack
     Body    = "Foragers Mantle",     -- Pet: Attack+
-    Hands   = "Yigit Gages",         -- Pet: Attack+
-    Legs    = "Yigit Seraweels",     -- Pet: Attack+
+    Hands   = "Summoner's Bracers",         -- Pet: Attack+
+    Legs    = "Pantin Churidars",     -- Pet: Attack+
     Feet    = "Puppetry Babouches",  -- Pet: Acc+
 };
 
 sets.PetWS = {                       -- pet using a mob-skill / WS
     Head    = "Puppetry Tobe",
     Body    = "Foragers Mantle",
-    Hands   = "Yigit Gages",
-    Legs    = "Yigit Seraweels",
+    Hands   = "Summoner's Bracers",
+    Legs    = "Pantin Churidars",
     Feet    = "Puppetry Babouches",
     Back    = "Visucius's Mantle",   -- if you get one; else Amemet
     Waist   = "Incarnation Sash",    -- +Pet: WSD if available

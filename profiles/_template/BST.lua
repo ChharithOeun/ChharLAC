@@ -18,9 +18,9 @@ sets.TP = {
 };
 
 sets.PetTP = {                   -- charmed/jugged pet is engaged
-    Head="Beast Helm", Neck="Beastmaster's Collar", Ear1="Rimeice Earring", Ear2="Flameice Earring",
-    Body="Beast Jackcoat +1", Hands="Beast Gloves", Ring1="Ferine Ring", Ring2="Ferine Ring",
-    Back="Beast Mantle", Waist="Sagacity Belt", Legs="Beast Trousers", Feet="Beast Gaiters",
+    Head="Beast Helm", Neck="Beastmaster's Collar", Ear1="Snow Ear", Ear2="Moldavite Earring",
+    Body="Beast Jackcoat +1", Hands="Beast Gloves", Ring1="Ulthalam's Ring", Ring2="Ulthalam's Ring",
+    Back="Beast Mantle", Waist="Warlock's Sash", Legs="Beast Trousers", Feet="Beast Gaiters",
 };
 
 sets.WS = {};
@@ -37,7 +37,7 @@ sets.WS["Primal Rend"]  = sets.WS.Default;
 sets.JA = {};
 sets.JA["Call Beast"]   = { Body="Beast Jackcoat +1" };
 sets.JA["Reward"]       = { Head="Beast Helm", Body="Beast Jackcoat +1", Hands="Beast Gloves", Legs="Beast Trousers" };
-sets.JA["Charm"]        = { Head="Beast Helm", Hands="Beast Gloves", Waist="Sagacity Belt" };
+sets.JA["Charm"]        = { Head="Beast Helm", Hands="Beast Gloves", Waist="Warlock's Sash" };
 sets.JA["Sic"]          = { Feet="Beast Gaiters" };
 sets.JA["Fight"]        = {};
 sets.JA["Familiar"]     = { Body="Beast Jackcoat +1" };

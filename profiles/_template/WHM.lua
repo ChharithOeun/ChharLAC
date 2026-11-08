@@ -3,39 +3,39 @@ local profile = {}; local sets = {}; profile.Sets = sets;
 local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
-    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Novia Earring",
-    Body="Nashira Manteel", Hands="Yigit Gages", Ring1="Ether Ring", Ring2="Star Ring",
+    Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
+    Body="Nashira Manteel", Hands="Summoner's Bracers", Ring1="Ether Ring", Ring2="Star Ring",
     Back="Rainbow Cape", Waist="Sacro Cord", Legs="Nashira Seraweels", Feet="Herald's Gaiters",
-    Main="Chatoyant Staff", Sub="Vivid Strap", Ammo="Clarus Stone",
+    Main="Chatoyant Staff", Sub="Caster's Cesti",
 };
 sets.Movement = { Feet="Herald's Gaiters" };
-sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Waist="Austerity Belt" };
+sets.Resting = { Head="Nashira Turban", Body="Dalmatica", Waist="Penitent's Rope" };
 sets.TP = sets.Idle;
 
 sets.Precast = {
     FastCast = { Ear1="Loquac. Earring", Body="Dalmatica", Legs="Nashira Seraweels" },
 };
 sets.Midcast = {
-    Cure       = { Head="Nahtirah Hat", Neck="Phalaina Locket", Ear1="Loquac. Earring", Ear2="Novia Earring",
-                   Body="Alb Cornette", Hands="Yigit Gages", Ring1="Ether Ring", Ring2="Star Ring",
-                   Back="Pahtli Cape", Waist="Cleric's Belt", Legs="Cleric's Pantaloons", Feet="Herald's Gaiters" },
+    Cure       = { Head="Walahra Turban", Neck="Phalaina Locket", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
+                   Body="Alb Cornette", Hands="Summoner's Bracers", Ring1="Ether Ring", Ring2="Star Ring",
+                   Back="Nexus Cape", Waist="Cleric's Belt", Legs="Cleric's Pantaloons", Feet="Herald's Gaiters" },
     CureII     = nil,  -- fallback to Cure
     Enhancing  = { Head="Nashira Turban", Neck="Colossus's Torque", Body="Nashira Manteel", Hands="Nashira Gages" },
-    Enfeebling = { Head="Nashira Turban", Neck="Uggalepih Pendant", Body="Nashira Manteel", Hands="Nashira Gages", Feet="Yigit Crackows" },
-    Elemental  = { Head="Nahtirah Hat", Neck="Uggalepih Pendant", Body="Igqira Weskit", Hands="Yigit Gages", Ring1="Star Ring", Feet="Yigit Crackows" },
+    Enfeebling = { Head="Nashira Turban", Neck="Uggalepih Pendant", Body="Nashira Manteel", Hands="Nashira Gages", Feet="Summoner's Pigaches" },
+    Elemental  = { Head="Walahra Turban", Neck="Uggalepih Pendant", Body="Igqira Weskit", Hands="Summoner's Bracers", Ring1="Star Ring", Feet="Summoner's Pigaches" },
     Divine     = { Head="Nashira Turban", Neck="Uggalepih Pendant", Body="Nashira Manteel" },
     Utsusemi   = { Head="Walahra Turban" },
     Healing    = { Ring1="Ether Ring" },
 };
 
-sets.WS = { Default = { Head="Nahtirah Hat", Body="Nashira Manteel", Hands="Yigit Gages" } };
+sets.WS = { Default = { Head="Walahra Turban", Body="Nashira Manteel", Hands="Summoner's Bracers" } };
 
 sets.JA = {};
-sets.JA["Benediction"]  = { Body="Piety Bliaut" };
-sets.JA["Divine Seal"]  = { Head="Piety Coif" };
-sets.JA["Devotion"]     = { Head="Piety Coif" };
-sets.JA["Afflatus Solace"] = { Body="Orison Bliaut" };
-sets.JA["Afflatus Misery"] = { Body="Orison Bliaut" };
+sets.JA["Benediction"]  = { Body="Cleric's Briault" };
+sets.JA["Divine Seal"]  = { Head="Cleric's Cap" };
+sets.JA["Devotion"]     = { Head="Cleric's Cap" };
+sets.JA["Afflatus Solace"] = { Body="Cleric's Briault" };
+sets.JA["Afflatus Misery"] = { Body="Cleric's Briault" };
 
 profile.OnLoad = function() gSettings.AllowAddSet = true; Sub.echo("[Chharizard WHM] loaded."); end
 profile.OnUnload = function() Sub.echo("[Chharizard WHM] unloaded."); end

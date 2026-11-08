@@ -6,10 +6,10 @@ sets.Idle = {
     Head="Walahra Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Snow Ear",
     Body="Duelist's Tabard", Hands="Duelist's Gloves", Ring1="Ether Ring", Ring2="Diamond Ring",
     Back="Errant Cape", Waist="Sacro Cord", Legs="Duelist's Tights", Feet="Herald's Gaiters",
-    Main="Joyeuse", Sub="Genbu's Shield", Ammo="Phtgn. Bomblet",
+    Main="Joyeuse", Sub="Genbu's Shield", Ammo="Fire Bomblet",
 };
 sets.Movement = { Feet="Herald's Gaiters" };
-sets.Resting = { Head="Duelist's Chapeau", Waist="Austerity Belt" };
+sets.Resting = { Head="Duelist's Chapeau", Waist="Penitent's Rope" };
 sets.TP = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Brutal Earring", Ear2="Suppanomimi",
     Body="Duelist's Tabard", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Sniper's Ring",

@@ -41,9 +41,9 @@ sets.JA["Berserk"]        = { Body="Warrior's Lorica" };  -- /WAR sub
 
 -- Dark magic Absorbs for DRK main
 sets.Midcast = {
-    Absorb   = { Head="Abyss Burgeonet", Body="Abyss Cuirass", Hands="Abyss Gauntlets", Legs="Abyss Flanchard", Feet="Abyss Sollerets" },
-    Drain    = { Head="Abyss Burgeonet", Body="Abyss Cuirass", Neck="Uggalepih Pendant" },
-    Aspir    = { Head="Abyss Burgeonet", Neck="Uggalepih Pendant" },
+    Absorb   = { Head="Warrior's Mask", Body="Warrior's Lorica", Hands="Warrior's Mufflers", Legs="Warrior's Cuisses", Feet="Warrior's Calligae" },
+    Drain    = { Head="Warrior's Mask", Body="Warrior's Lorica", Neck="Uggalepih Pendant" },
+    Aspir    = { Head="Warrior's Mask", Neck="Uggalepih Pendant" },
     Stun     = { Head="Duelist's Chapeau", Neck="Uggalepih Pendant", Legs="Igqira Lappas" },
     Utsusemi = { Head="Walahra Turban" },
     Enhancing= {},

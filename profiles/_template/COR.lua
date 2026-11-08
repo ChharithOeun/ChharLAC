@@ -4,7 +4,7 @@ local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Ch
 
 sets.Idle = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Merman's Earring", Ear2="Ethereal Earring",
-    Body="Commodore Frac", Hands="Commodore Gants", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
+    Body="Corsair's Frac", Hands="Corsair's Gants", Ring1="Sniper's Ring", Ring2="Sniper's Ring",
     Back="Amemet Mantle +1", Waist="Warwolf Belt", Legs="Corsair's Trews", Feet="Corsair's Bottes",
     Main="Nirvana", Sub="Pole Grip", Ammo="Bullet", Range="Culverin",
 };
@@ -18,14 +18,14 @@ sets.TP = {
 sets.Preshot = { Head="Walahra Turban", Legs="Nashira Seraweels" };
 sets.Midshot = {
     Head="Optical Hat", Neck="Peacock Amulet", Ear1="Volley Earring", Ear2="Assault Earring",
-    Body="Commodore Frac", Hands="Commodore Gants", Ring1="Rajas Ring", Ring2="Woodsman Ring",
+    Body="Corsair's Frac", Hands="Corsair's Gants", Ring1="Rajas Ring", Ring2="Woodsman Ring",
     Back="Amemet Mantle +1", Waist="Elanid Belt", Legs="Nashira Seraweels", Feet="Corsair's Bottes",
 };
 
 sets.WS = {};
 sets.WS.Default = {                           -- ranged WS (Slug Shot, Detonator)
     Head="Optical Hat", Neck="Peacock Amulet", Ear1="Assault Earring", Ear2="Merman's Earring",
-    Body="Commodore Frac", Hands="Corsair's Gants", Ring1="Rajas Ring", Ring2="Woodsman Ring",
+    Body="Corsair's Frac", Hands="Corsair's Gants", Ring1="Rajas Ring", Ring2="Woodsman Ring",
     Back="Cerberus Mantle", Waist="Elanid Belt", Legs="Corsair's Trews", Feet="Corsair's Bottes",
 };
 sets.WS["Slug Shot"]     = sets.WS.Default;
@@ -35,18 +35,18 @@ sets.WS["Wildfire"]      = sets.WS.Default;
 sets.WS["Last Stand"]    = sets.WS.Default;
 
 sets.JA = {};
-sets.JA["Phantom Roll"]   = { Head="Commodore Tricorne", Hands="Commodore Gants" };
+sets.JA["Phantom Roll"]   = { Head="Corsair's Tricorne", Hands="Corsair's Gants" };
 sets.JA["Wild Card"]      = { Feet="Corsair's Bottes" };
 sets.JA["Random Deal"]    = { Body="Corsair's Frac" };
 sets.JA["Snake Eye"]      = { Legs="Corsair's Trews" };
 sets.JA["Double-Up"]      = { Ring1="Barataria Ring" };
-sets.JA["Fold"]           = { Hands="Commodore Gants" };
+sets.JA["Fold"]           = { Hands="Corsair's Gants" };
 sets.JA["Bust"]           = {};
 
 -- Quickdraw shots (elemental)
 sets.Precast = { FastCast = { Ear2="Loquac. Earring" } };
 sets.Midcast = {
-    QuickDraw = { Head="Commodore Tricorne", Neck="Uggalepih Pendant", Hands="Commodore Gants",
+    QuickDraw = { Head="Corsair's Tricorne", Neck="Uggalepih Pendant", Hands="Corsair's Gants",
                   Ring1="Snow Ring", Legs="Corsair's Trews" },
     Utsusemi  = { Head="Walahra Turban" },
     Cure      = {},
