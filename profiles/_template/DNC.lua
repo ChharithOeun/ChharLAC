@@ -1,6 +1,6 @@
 -- Chharizard DNC - LAC profile (dancer, waltz/samba/step, era WoTG)
 local profile = {}; local sets = {}; profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Suppanomimi", Ear2="Brutal Earring",

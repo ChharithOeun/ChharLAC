@@ -52,7 +52,7 @@ local cfg = {
     petHpThreshold= 50,     -- % pet HP that triggers OIL use
     deactivatehpp = 85,     -- % pet HP that triggers REPAIR (Selindril)
     preset        = 'rng',-- NAMED preset -- harle/blm/whm/rdm/tank/turtle/meva/rng/rngtank/lvl60
-    mode          = 'ranged',-- (legacy fallback -- only used if preset is empty and head/frame unset)
+    mode          = '',-- (legacy fallback -- only used if preset is empty and head/frame unset)
     head          = '',     -- (legacy manual override)
     frame         = '',     -- (legacy manual override)
     overdrive     = false,  -- toggle: Overdrive mindset (Wind-heavy for Sharpshot bursts)
@@ -88,8 +88,8 @@ local cfg = {
 local manPatterns = {
     Melee        = { fire=2, light=1 },
     Ranged       = { thunder=2, fire=1 },     -- duplicate-key form dropped to {t=1,f=1}; use count form
-    HybridRanged = { fire=1, light=1, thunder=1 },
-    Tank         = { earth=2, light=1 },
+    HybridRanged = { thunder=1, fire=1, thunder=1 },
+    Tank         = { earth=1, light=1, dark=1 },
     LightTank    = { earth=1, light=1, water=1 },
     Magic        = { ice=1, dark=1, light=1 },
     Heal         = { light=2, dark=1 },
@@ -98,7 +98,7 @@ local manPatterns = {
 
 -- Head-only fallback (used when preset is '' and no exact head/frame match).
 local headToPattern = {
-    Valoredge   = { earth=2, light=1,                wsForce='dark'    },
+    Valoredge   = { earth=1, light=1, dark=1 							},
     Harlequin   = { fire=1,  light=1, earth=1                          },
     Sharpshot   = { thunder=1,  fire=1, thunder=1   		  		},
     Stormwaker  = { ice=1,   dark=1, light=1                           },
@@ -140,7 +140,7 @@ local presets = {
     },
     tank = {
         head='Valoredge', frame='Valoredge',
-        pattern={ earth=1, fire=1, light=1 }, wsForce='dark',
+        pattern={ earth=1, light=1, thunder=1 },
         desc='Valoredge + Valoredge -- earth/fire/light + Dark @ WS (Cannibal Blade force)',
     },
     turtle = {
@@ -162,7 +162,7 @@ local presets = {
     },
     rngtank = {
         head='Valoredge', frame='Sharpshot',
-        pattern={ light=1, fire=1, wind=1 }, wsForce='thunder',
+        pattern={ wind=1, fire=1, thunder=1 }, wsForce='thunder',
         desc='Valoredge + Sharpshot -- light/fire/wind + Thunder @ WS (Daze force)',
     },
     lvl60 = {
@@ -192,6 +192,22 @@ local lastStrobeAt = 0;
 
 local function strobeReady()
     return (os.time() - lastStrobeAt) >= STROBE_CD;
+end
+
+-- Pretty-print a pattern like {fire=2, light=1} as "Fire x2, Light x1".
+-- HOISTED to file scope because text_in handlers and _autoTick (Overdrive
+-- detection) both call this. Previously it was a local inside HandleCommand,
+-- which caused "attempt to call global 'fmtPattern' (a nil value)" the
+-- moment Overdrive triggered the odNow transition echo.
+local function fmtPattern(p)
+    local parts = {};
+    for _, e in ipairs({'fire','ice','wind','earth','thunder','water','light','dark'}) do
+        if (p and p[e]) then
+            parts[#parts+1] = string.format('%s x%d',
+                e:sub(1,1):upper()..e:sub(2), p[e]);
+        end
+    end
+    return table.concat(parts, ', ');
 end
 
 -- Pet TP window where we prioritize the WS-forcing maneuver.
@@ -1028,17 +1044,7 @@ profile.HandleCommand = function(args)
         return;
     end
 
-    -- Pretty-print a pattern like {fire=2, light=1} as "Fire x2, Light x1"
-    local function fmtPattern(p)
-        local parts = {};
-        for _, e in ipairs({'fire','ice','wind','earth','thunder','water','light','dark'}) do
-            if (p[e]) then
-                parts[#parts+1] = string.format('%s x%d',
-                    e:sub(1,1):upper()..e:sub(2), p[e]);
-            end
-        end
-        return table.concat(parts, ', ');
-    end
+    -- (fmtPattern is now hoisted to file scope above strobeReady.)
 
     if (sub == 'mode' and args[2]) then
         local m = args[2]:sub(1,1):upper() .. args[2]:sub(2):lower();

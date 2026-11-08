@@ -1,7 +1,7 @@
 -- Chharizard BST - LAC profile (pet management, era)
 local profile = {}; local sets = {}; profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
-local Pet = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/bst_pet.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
+local Pet = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/bst_pet.lua');
 
 sets.Idle = {
     Head="Walahra Turban", Neck="Peacock Amulet", Ear1="Merman's Earring", Ear2="Ethereal Earring",

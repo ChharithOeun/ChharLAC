@@ -22,15 +22,23 @@ local Core = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_
 -- ---------------------------------------------------------------------------
 -- Instrument table (era-appropriate; LAC skips missing items silently)
 -- ---------------------------------------------------------------------------
+-- Instrument table. Current level: BRD 8 -- using starter instruments.
 local Inst = {
-    Idle     = "Faerie Piccolo",                    -- generic default
-    Wind     = "Faerie Piccolo",                    -- March / Minuet / Madrigal
-    String   = "Mary's Horn",                       -- Ballad / Paeon / Requiem
-    Lyre     = "Angel Lyre",                        -- Lullaby / fallback
-    Potency  = "Gjallarhorn|Marsyas",               -- +Song Effect (if ever owned)
-    FastCast = "Daurdabla",                         -- -castcast on songs (if owned)
-    Starter  = "Harpsichord",                       -- lvl 1 fallback
+    Wind     = "Cornette",                          -- March / Minuet / Madrigal
+    String   = "Maple Harp",                          -- Ballad / Paeon / Requiem (same til higher-tier)
+    Lyre     = "Cornette",                          -- Lullaby / fallback
+    -- (future upgrades, uncomment as acquired)
+    -- Wind    = "Faerie Piccolo",   -- lvl 50
+    -- String  = "Mary's Horn",      -- lvl ~50
+    -- Lyre    = "Angel Lyre",       -- lvl ~50
 };
+
+-- Runtime-togglable idle Range. Default = Cornette (no mid-song blink).
+--   /lac fwd range <item>      -- swap (e.g. "/lac fwd range Animator")
+--   /lac fwd range             -- show current
+--   /lac fwd verbose on|off    -- echo swaps to chat (default: off)
+local idleRange = "Cornette";
+local verbose   = false;
 
 -- ---------------------------------------------------------------------------
 -- IDLE sets -- base + sub-states
@@ -40,7 +48,8 @@ sets.Idle = {
     Body="Aoidos' Hongreline +2", Hands="Aoidos' Manchettes +2", Ring1="Sniper's Ring", Ring2="Star Ring",
     Back="Rainbow Cape", Waist="Corsette +1", Legs="Aoidos' Rhingrave +2", Feet="Aoidos' Cothurnes +2",
     Main="Joyeuse", Sub="Genbu's Shield",
-    Range=Inst.Idle, Ammo="Clarus Stone",
+    -- Range intentionally omitted here -- resolver injects idleRange below.
+    Ammo="Clarus Stone",
 };
 -- Sub-states layer on top of Idle (separate table -- Core resolver reads here,
 -- so sets.Idle stays pure equipment keys and EquipSet(sets.Idle) iterates clean).
@@ -68,7 +77,7 @@ sets.TP = {
     Body="Aoidos' Hongreline +2", Hands="Dusk Gloves", Ring1="Rajas Ring", Ring2="Sniper's Ring",
     Back="Cerberus Mantle", Waist="Swift Belt", Legs="Byakko's Haidate", Feet="Homam Gambieras",
     Main="Joyeuse", Sub="Genbu's Shield",
-    Range=Inst.TP or Inst.Idle,
+    -- Range intentionally omitted -- keep whatever idle resolved to.
 };
 -- OffenseMode overlays live in a sibling table (same reason as IdleStates).
 sets.TPModes = {
@@ -90,7 +99,8 @@ sets.Precast = {
     FastCast = {
         Head="Aoidos' Calot +1", Ear1="Loquac. Earring",
         Body="Aoidos' Hongreline +2", Hands="Aoidos' Manchettes +2",
-        Legs="Aoidos' Rhingrave +2", Range=Inst.FastCast or Inst.Idle,
+        Legs="Aoidos' Rhingrave +2",
+        -- Range omitted: don't swap during precast, let midcast handle it.
     },
     -- Per-skill overlay (walks spell.Skill):
     ['Singing']           = { Legs="Fili Rhingrave" },      -- +song precast if owned
@@ -191,11 +201,13 @@ end
 -- ---------------------------------------------------------------------------
 profile.HandleDefault = function()
     gFunc.EquipSet(Core.resolveIdle(sets));
+    gFunc.EquipSet({ Range = idleRange });   -- user-togglable Range
     Sub.tick(true);
 end
 
 profile.HandleEngaged = function()
     gFunc.EquipSet(Core.resolveTP(sets));
+    gFunc.EquipSet({ Range = idleRange });   -- carry user-togglable Range into TP too
     Sub.tick(true);
 end
 
@@ -231,7 +243,28 @@ profile.HandleCommand = function(args)
     if (#args < 1) then return; end
     if (Core.handleCommand(args)) then return; end
     if (Sub.handleCommand(args))  then return; end
-    if (args[1]:lower() == 'debug') then Sub.debug(); end
+    local cmd = args[1]:lower();
+    -- /lac fwd range <item>  (or no arg = show current)
+    if (cmd == 'range') then
+        if (args[2]) then
+            idleRange = args[2];
+            -- Allow multi-word item names: "/lac fwd range Faerie Piccolo"
+            for i = 3, #args do idleRange = idleRange .. ' ' .. args[i]; end
+            if (verbose) then Core.echo('idle Range -> %s', idleRange); end
+        else
+            Core.echo('idle Range = %s', idleRange);   -- query always prints
+        end
+        return;
+    end
+    -- /lac fwd verbose on|off  (default off; silences range-swap echoes)
+    if (cmd == 'verbose') then
+        if     (args[2] and args[2]:lower() == 'on')  then verbose = true;
+        elseif (args[2] and args[2]:lower() == 'off') then verbose = false;
+        else   verbose = not verbose; end
+        Core.echo('verbose = %s', verbose and 'ON' or 'OFF');
+        return;
+    end
+    if (cmd == 'debug') then Sub.debug(); end
 end
 
 return profile;

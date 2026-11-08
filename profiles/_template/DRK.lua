@@ -1,6 +1,6 @@
 -- Chharizard DRK - LAC profile (2H DPS, Souleater/Last Resort, era)
 local profile = {}; local sets = {}; profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
     Head="Walahra Turban", Neck="Chivalrous Chain", Ear1="Merman's Earring", Ear2="Ethereal Earring",

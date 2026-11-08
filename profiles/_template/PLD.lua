@@ -28,14 +28,14 @@
 --   /lac fwd config           -- print current settings
 --   /lac fwd debug            -- inspect state
 --
--- ⚠️  Auto-cast on cooldown may violate Horizon's rules. Verify TOS.
+-- âš ï¸  Auto-cast on cooldown may violate Horizon's rules. Verify TOS.
 --     Everything defaults to OFF; toggle explicitly to enable.
 -- ============================================================================
 
 local profile = {};
 local sets = {};
 profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 -- ---------------------------------------------------------------------------
 -- Runtime config

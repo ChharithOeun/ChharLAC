@@ -1,6 +1,6 @@
 -- Chharizard BLM - LAC profile (nuker, era)
 local profile = {}; local sets = {}; profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
     Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Novia Earring",
@@ -61,7 +61,7 @@ profile.HandleMidcast = function()
     local elem = sp.Element;
     if (sp.Skill == 'Elemental Magic') then
         gFunc.EquipSet(sets.Midcast.Elemental);
-        if (elem and staff[elem]) then gFunc.Equip({ Main=staff[elem] }); end
+        if (elem and staff[elem]) then gFunc.EquipSet({ Main=staff[elem] }); end
     elseif (sp.Skill == 'Enfeebling Magic') then gFunc.EquipSet(sets.Midcast.Enfeebling);
     elseif (sp.Skill == 'Enhancing Magic') then gFunc.EquipSet(sets.Midcast.Enhancing);
     elseif (sp.Skill == 'Dark Magic') then gFunc.EquipSet(sets.Midcast.Dark);

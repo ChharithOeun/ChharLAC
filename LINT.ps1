@@ -15,7 +15,10 @@
 #      queues two maneuvers instead of three).
 #   7. Preset-description drift between PUP.lua `presets.X.desc` and
 #      ChharControl's `preset_desc[X]`.
-#   8. Repo _template vs deployed character folders (drift detector).
+#   8. ChharTarget ph_database entries with pops/hex_range but no `zone =`
+#      field (ungated -- one same-named mob in another zone away from a
+#      false "may pop <NM>" annotation).
+#   9. Repo _template vs deployed character folders (drift detector).
 #
 # Run from repo root:   .\LINT.ps1
 # Exits 0 if clean, 1 if any check fails.
@@ -225,9 +228,73 @@ if (-not $ccPath) {
 Write-Host ""
 
 # -------------------------------------------------------------------------
-# [8] Repo _template vs deployed character folders (drift)
+# [8] ChharTarget ph_database.lua -- entries with pops/hex_range but no zone
 # -------------------------------------------------------------------------
-Write-Host "[8] Repo _template vs deployed character folders (drift)" -ForegroundColor Cyan
+# Any PH entry that has pops or hex_range but is missing a `zone =` field
+# is UNGATED: if a mob with the same name exists in a different zone, we'll
+# falsely annotate it with "may pop <NM>". The ChharTarget zone-gate code
+# can only filter when the entry has a zone set.
+Write-Host "[8] ChharTarget ph_database entries missing zone=" -ForegroundColor Cyan
+$phDbCandidates = @()
+if ($lacDir) {
+    $root = $lacDir -replace '\\?config\\?addons\\?luashitacast\\?$',''
+    $phDbCandidates += (Join-Path $root 'addons\chhartarget\ph_database.lua')
+    $phDbCandidates += (Join-Path $root 'config\addons\chhartarget\ph_database.lua')
+}
+$phDbPath = $phDbCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+if (-not $phDbPath) {
+    Write-Host "  skipped (ph_database.lua not found)" -ForegroundColor Yellow
+} else {
+    $lines = Get-Content $phDbPath
+    $ungated = @()
+    $inEntry = $false
+    $entryName = ""
+    $entryStartLine = 0
+    $entryHasZone = $false
+    $entryHasPopsOrRange = $false
+    $depth = 0
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        $line = $lines[$i]
+        # Entry start: PH['name'] = {  or  PH["name"] = {
+        if (-not $inEntry -and $line -match 'PH\s*\[\s*[''"](.+?)[''"]\s*\]\s*=\s*\{') {
+            $inEntry = $true
+            $entryName = $matches[1]
+            $entryStartLine = $i + 1
+            $entryHasZone = $false
+            $entryHasPopsOrRange = $false
+            $depth = 1
+            continue
+        }
+        if ($inEntry) {
+            # Rough brace tracking (works for well-formed entries, which these are).
+            $opens  = ([regex]::Matches($line, '\{')).Count
+            $closes = ([regex]::Matches($line, '\}')).Count
+            $depth += $opens - $closes
+            if ($line -match '\bzone\s*=')                           { $entryHasZone = $true }
+            if ($line -match '\b(pops|hex_range|ph_hex_ids)\s*=\s*\{') { $entryHasPopsOrRange = $true }
+            if ($depth -le 0) {
+                if ($entryHasPopsOrRange -and -not $entryHasZone) {
+                    $ungated += [pscustomobject]@{ Name = $entryName; Line = $entryStartLine }
+                }
+                $inEntry = $false
+            }
+        }
+    }
+    if ($ungated.Count -eq 0) {
+        OK "all PH entries with pops/hex_range have zone="
+    } else {
+        foreach ($u in $ungated) {
+            Problem ("ph_database.lua:{0}  entry '{1}' has pops/hex_range but no zone=" -f $u.Line, $u.Name)
+        }
+    }
+}
+Write-Host ""
+
+# -------------------------------------------------------------------------
+# [9] Repo _template vs deployed character folders (drift)
+# -------------------------------------------------------------------------
+Write-Host "[9] Repo _template vs deployed character folders (drift)" -ForegroundColor Cyan
 if ($lacDir) {
     $driftAny = $false
     foreach ($cd in $charDirs) {

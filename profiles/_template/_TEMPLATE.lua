@@ -13,7 +13,7 @@
 local profile = {};
 local sets = {};
 profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 -- ---------------------------------------------------------------------------
 -- Gear sets -- fill in with era-appropriate items for this job.

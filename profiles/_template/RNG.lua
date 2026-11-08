@@ -40,14 +40,14 @@
 --   - Rings: Rajas Ring, Toreador's Ring, Sniper's Ring +1
 --   - Ears: Volley Earring (Snapshot), Drone Earring (Ranged Attack)
 --
--- Server-specific: Horizon has custom items and adjusted stats — check their
+-- Server-specific: Horizon has custom items and adjusted stats â€” check their
 -- wiki before assuming retail-era BiS on any listed piece.
 -- ============================================================================
 
 local profile = {};
 local sets = {};
 profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 -- ---------------------------------------------------------------------------
 -- Simple mode state -- replaces gcinclude/gcdisplay so we don't need any
@@ -602,7 +602,7 @@ end
 profile.HandleCommand = function(args)
     if (#args < 1) then return; end
 
-    -- Shared subjob commands (jumps/utsu/hasso/etc) — try library first
+    -- Shared subjob commands (jumps/utsu/hasso/etc) â€” try library first
     if (Sub.handleCommand(args)) then return; end
 
     -- Diagnostic: print what we see. Run `/lac fwd debug` to inspect.

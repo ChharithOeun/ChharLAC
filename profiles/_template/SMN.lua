@@ -1,7 +1,7 @@
 -- Chharizard SMN - LAC profile (avatars, era)
 local profile = {}; local sets = {}; profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
-local Avatar = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/smn_avatar.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
+local Avatar = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/smn_avatar.lua');
 
 sets.Idle = {
     Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Novia Earring",

@@ -149,14 +149,14 @@ end
 -- Idle resolver
 -- ---------------------------------------------------------------------------
 -- Layers:
---   sets.Idle (base, pure equipment keys only)
---   sets.IdleStates[IdleMode]  -- e.g., sets.IdleStates.Field / .Town / .DT
---   sets.Defense[DefenseMode]  -- when DefenseMode != None
---   sets.Movement              -- when player is moving
+--   sets.Idle (base)
+--   sets.Idle[IdleMode]       -- e.g., sets.Idle.Field, sets.Idle.Town, sets.Idle.DT
+--   sets.Defense[DefenseMode] -- when DefenseMode != None
+--   sets.Movement             -- when player is moving
 function Core.resolveIdle(sets)
     local layers = { sets.Idle };
-    if (sets.IdleStates and sets.IdleStates[Core.state.IdleMode]) then
-        table.insert(layers, sets.IdleStates[Core.state.IdleMode]);
+    if (sets.Idle and sets.Idle[Core.state.IdleMode]) then
+        table.insert(layers, sets.Idle[Core.state.IdleMode]);
     end
     if (Core.state.DefenseMode ~= 'None'
         and sets.Defense and sets.Defense[Core.state.DefenseMode]) then
@@ -171,12 +171,10 @@ function Core.resolveIdle(sets)
 end
 
 -- TP resolver with OffenseMode + DefenseMode + HybridMode overlays.
--- OffenseMode overlays live in sets.TPModes (NOT nested in sets.TP, same
--- reason as IdleStates -- would leak as fake slot keys to Equip).
 function Core.resolveTP(sets)
     local layers = { sets.TP };
-    if (sets.TPModes and sets.TPModes[Core.state.OffenseMode]) then
-        table.insert(layers, sets.TPModes[Core.state.OffenseMode]);
+    if (sets.TP and sets.TP[Core.state.OffenseMode]) then
+        table.insert(layers, sets.TP[Core.state.OffenseMode]);
     end
     if (Core.state.HybridMode ~= 'Normal'
         and sets.Hybrid and sets.Hybrid[Core.state.HybridMode]) then

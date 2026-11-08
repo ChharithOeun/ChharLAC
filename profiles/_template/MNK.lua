@@ -5,7 +5,7 @@
 local profile = {};
 local sets = {};
 profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/subjob_features.lua');
+local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
 
 sets.Idle = {
     Head="Empress Hairpin", Neck="Peacock Amulet", Ear1="Merman's Earring", Ear2="Merman's Earring",
