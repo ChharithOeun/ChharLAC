@@ -417,7 +417,7 @@ function M.selfIndex()
     return AshitaCore:GetMemoryManager():GetParty():GetMemberTargetIndex(0);
 end
 
-function M.selfTp() return AshitaCore:GetMemoryManager():GetPlayer():GetMainJobTP() or 0; end
+function M.selfTp() return AshitaCore:GetMemoryManager():GetParty():GetMemberTP(0) or 0; end  -- Player has no GetMainJobTP; TP comes from Party
 function M.selfHpPct() return AshitaCore:GetMemoryManager():GetParty():GetMemberHPPercent(0) or 100; end
 function M.selfMpPct() return AshitaCore:GetMemoryManager():GetParty():GetMemberMPPercent(0) or 100; end
 function M.amEngaged() return gData.GetPlayer().Status == 'Engaged'; end
