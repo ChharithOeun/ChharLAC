@@ -187,12 +187,31 @@ end
 -- ---------------------------------------------------------------------------
 -- Load / Unload
 -- ---------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+-- Hidden trainer: song skillup loop.
+-- ---------------------------------------------------------------------------
+-- Rotation cycles through Army's Paeon II (Singing+String) and Valor Minuet
+-- (Singing+Wind). Each tick: if sitting + MP full -> stand, if MP low -> sit,
+-- else queue the next song. Caps Singing/String/Wind together.
+-- Toggle via `/lac fwd train on`. Hidden from help output.
+local trainSongs = { "Army's Paeon II", "Valor Minuet" };
+local trainIdx   = 1;
+local function brdTrainer(ply, party)
+    if (Core.handleRestCycle(ply, party)) then return; end   -- sitting/resting
+    local song = trainSongs[trainIdx];
+    trainIdx = (trainIdx % #trainSongs) + 1;
+    Core.auto(string.format('/ma "%s" <me>', song));
+end
+
 profile.OnLoad = function()
     gSettings.AllowAddSet = true;
+    Core.registerTrainer(brdTrainer);   -- hidden skillup loop
     Core.echo('[Chharizard BRD] loaded (server=%s, auto=%s).',
         Core.server, tostring(Core.automationAllowed));
 end
 profile.OnUnload = function()
+    Core.unregisterTrainer();
+    Core.training = false;
     Core.echo('[Chharizard BRD] unloaded.');
 end
 
@@ -203,6 +222,7 @@ profile.HandleDefault = function()
     gFunc.EquipSet(Core.resolveIdle(sets));
     gFunc.EquipSet({ Range = idleRange });   -- user-togglable Range
     Sub.tick(true);
+    Core.trainTick();                        -- hidden skillup loop
 end
 
 profile.HandleEngaged = function()
