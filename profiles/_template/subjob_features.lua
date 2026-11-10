@@ -906,28 +906,11 @@ end
 -- its own case), auto-load the visual-orb addon; unload when sub changes
 -- away. State-tracked so we only issue the command on transitions.
 -- ---------------------------------------------------------------------------
--- Persistent across file reloads: without _G, every zone/job change
--- re-dofile's this module and resets the local var, making us think
--- chharmaton isn't loaded -> we fire /addon load again -> chat spam on
--- every zone. _G persists across dofile calls within the session.
-_G.__chharMatonLoadedBySub = _G.__chharMatonLoadedBySub or false;
-local function syncChharmaton()
-    local main = (M.mainJob() or ''):upper();
-    local sub  = (M.subJob()  or ''):upper();
-    -- Zone-transition guard: Ashita's party struct briefly reads empty while
-    -- zoning. Skip the sync until job data is populated.
-    if (main == '' or sub == '') then return; end
-    -- PUP main is already handled by PUP.lua's OnLoad/OnUnload; don't fight it.
-    if (main == 'PUP') then return; end
-    local shouldLoad = (sub == 'PUP');
-    if (shouldLoad == _G.__chharMatonLoadedBySub) then return; end
-    if (shouldLoad) then
-        AshitaCore:GetChatManager():QueueCommand(1, '/addon load chharmaton');
-    else
-        AshitaCore:GetChatManager():QueueCommand(1, '/addon unload chharmaton');
-    end
-    _G.__chharMatonLoadedBySub = shouldLoad;
-end
+-- ChharMaton sub-job auto-load: REMOVED per user preference.
+-- ChharMaton is only meaningful for PUP MAIN (real automaton), not /PUP sub.
+-- PUP.lua's OnLoad/OnUnload handles its own chharmaton lifecycle. This
+-- function is kept as a no-op stub so M.tick doesn't crash if called.
+local function syncChharmaton() end
 
 function M.tick(active)
     if (not active) then return; end
