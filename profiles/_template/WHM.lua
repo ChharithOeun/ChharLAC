@@ -1,6 +1,19 @@
 -- Chharizard WHM - LAC profile (healer, era)
 local profile = {}; local sets = {}; profile.Sets = sets;
-local Sub = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
+local Sub  = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/Chharizard_3679/subjob_features.lua');
+local Core = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_template/lac_core.lua');
+
+-- Hidden trainer: cycles Cure (Healing) + Protect (Enhancing) + Dia
+-- (Enfeebling) self-cast for skillup. Toggle via `/lac fwd train on`.
+-- Hidden from help. Aurora-safe (Core.auto no-op).
+local trainSpells = { 'Cure', 'Protect', 'Dia' };
+local trainIdx    = 1;
+local function whmTrainer(ply, party)
+    if (Core.handleRestCycle(ply, party)) then return; end
+    local sp = trainSpells[trainIdx];
+    trainIdx = (trainIdx % #trainSpells) + 1;
+    Core.auto(string.format('/ma "%s" <me>', sp));
+end
 
 sets.Idle = {
     Head="Nashira Turban", Neck="Uggalepih Pendant", Ear1="Loquac. Earring", Ear2="Moldavite Earring",
@@ -37,13 +50,21 @@ sets.JA["Devotion"]     = { Head="Cleric's Cap" };
 sets.JA["Afflatus Solace"] = { Body="Cleric's Briault" };
 sets.JA["Afflatus Misery"] = { Body="Cleric's Briault" };
 
-profile.OnLoad = function() gSettings.AllowAddSet = true; Sub.echo("[Chharizard WHM] loaded."); end
-profile.OnUnload = function() Sub.echo("[Chharizard WHM] unloaded."); end
+profile.OnLoad = function()
+    gSettings.AllowAddSet = true;
+    Core.registerTrainer(whmTrainer);
+    Sub.echo("[Chharizard WHM] loaded.");
+end
+profile.OnUnload = function()
+    Core.unregisterTrainer(); Core.training = false;
+    Sub.echo("[Chharizard WHM] unloaded.");
+end
 profile.HandleDefault = function()
     gFunc.EquipSet(sets.Idle);
     if (gData.GetPlayer().IsMoving) then gFunc.EquipSet(sets.Movement); end
     if (gData.GetPlayer().Status == 'Resting') then gFunc.EquipSet(sets.Resting); end
     Sub.tick(true);
+    Core.trainTick();
 end
 profile.HandleEngaged = function() gFunc.EquipSet(sets.TP); Sub.tick(true); end
 profile.HandleWeaponskill = function() gFunc.EquipSet(sets.WS.Default); end
@@ -63,6 +84,7 @@ profile.HandleMidcast = function()
 end
 profile.HandleCommand = function(args)
     if (#args<1) then return; end
+    if (Core.handleCommand(args)) then return; end   -- modes + hidden train
     if (Sub.handleCommand(args)) then return; end
     if (args[1]:lower()=='debug') then Sub.debug(); end
 end
