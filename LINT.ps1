@@ -19,6 +19,9 @@
 #      field (ungated -- one same-named mob in another zone away from a
 #      false "may pop <NM>" annotation).
 #   9. Repo _template vs deployed character folders (drift detector).
+#   10. Lua syntax check -- uses `luac -p` if available, falls back to a
+#       regex heuristic for common manual-edit mistakes (trailing commas
+#       before `local`, unbalanced braces).
 #
 # Run from repo root:   .\LINT.ps1
 # Exits 0 if clean, 1 if any check fails.
@@ -312,6 +315,48 @@ if ($lacDir) {
     if (-not $driftAny) { OK "all deployed files match repo" }
 } else {
     Write-Host "  skipped (no LAC install detected)" -ForegroundColor Yellow
+}
+Write-Host ""
+
+# -------------------------------------------------------------------------
+# [10] Lua syntax check
+# -------------------------------------------------------------------------
+# Prefer luac -p (installed via Lua for Windows, Chocolatey, scoop, etc.) for
+# a real parse. Fall back to regex heuristic for the exact bug class we hit
+# today: `local foo = "bar",\n` followed by `local baz = ...` (trailing comma
+# instead of semicolon, parsed as continuation).
+Write-Host "[10] Lua syntax" -ForegroundColor Cyan
+$luac = Get-Command luac -ErrorAction SilentlyContinue
+if (-not $luac) { $luac = Get-Command luac54 -ErrorAction SilentlyContinue }
+if (-not $luac) { $luac = Get-Command luac53 -ErrorAction SilentlyContinue }
+$lintHits = @()
+foreach ($d in $scanDirs) {
+    foreach ($f in Get-ChildItem "$d\*.lua" -ErrorAction SilentlyContinue) {
+        if ($luac) {
+            # Full parse via luac -p (writes no bytecode, just checks syntax).
+            $out = & $luac.Source -p $f.FullName 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                $lintHits += "$($f.FullName): $out"
+            }
+        } else {
+            # Regex heuristic: trailing-comma-before-local (the bug we hit).
+            $lines = Get-Content $f.FullName
+            for ($i = 0; $i -lt ($lines.Count - 1); $i++) {
+                if ($lines[$i] -match ',\s*$' -and $lines[$i+1] -match '^\s*local\s+') {
+                    $lintHits += "$($f.FullName):$($i+1)  trailing comma before 'local' on next line"
+                }
+            }
+        }
+    }
+}
+if ($lintHits.Count -eq 0) {
+    if ($luac) {
+        OK "all files parse (luac -p)"
+    } else {
+        OK "no trailing-comma-before-local (heuristic; install luac for full parse)"
+    }
+} else {
+    foreach ($h in $lintHits) { Problem $h }
 }
 Write-Host ""
 

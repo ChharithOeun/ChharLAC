@@ -24,9 +24,9 @@ local Core = dofile(AshitaCore:GetInstallPath() .. 'config/addons/luashitacast/_
 -- ---------------------------------------------------------------------------
 -- Instrument table. Current level: BRD 8 -- using starter instruments.
 local Inst = {
-    Wind     = "Cornette",                          -- March / Minuet / Madrigal
+    Wind     = "Royal Spearman's Horn",                         -- March / Minuet / Madrigal
     String   = "Maple Harp",                          -- Ballad / Paeon / Requiem (same til higher-tier)
-    Lyre     = "Cornette",                          -- Lullaby / fallback
+    Lyre     = "Royal Spearman's Horn",                       -- Lullaby / fallback
     -- (future upgrades, uncomment as acquired)
     -- Wind    = "Faerie Piccolo",   -- lvl 50
     -- String  = "Mary's Horn",      -- lvl ~50
@@ -37,7 +37,7 @@ local Inst = {
 --   /lac fwd range <item>      -- swap (e.g. "/lac fwd range Animator")
 --   /lac fwd range             -- show current
 --   /lac fwd verbose on|off    -- echo swaps to chat (default: off)
-local idleRange = "Cornette";
+local idleRange = "Royal Spearman's Horn";
 local verbose   = false;
 
 -- ---------------------------------------------------------------------------
