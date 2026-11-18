@@ -1,0 +1,204 @@
+# Era-cap NM seed list for ChharTarget / WIKI-SCRAPE.ps1
+# ============================================================================
+# Usage:
+#   .\WIKI-SCRAPE.ps1 -ListFile .\era-nm-seed.txt
+#
+# Covers every "popular / camped" NM through 75-cap era (vanilla + RoZ +
+# CoP + ToAU).  Lines starting with # are comments.  Organized by zone so
+# you can comment out expansions your server doesn't support.
+#
+# To scrape EVERY NM BG-Wiki knows about (not just this list), run:
+#   .\WIKI-SCRAPE.ps1 -All
+
+# ============================================================================
+# STARTER / FORESTS (Lv 1-15)
+# ============================================================================
+Jaggedy-Eared Jack
+Tauzaroq
+Lumberjack
+Fallen Mailed-One
+Cwn Cyrff
+Leaping Lizzy
+Bagwell
+Giant Bugard
+Rogue Opo-opo
+Moist Mandragora
+Carmine-Tailed Chapuli
+Bull Dhalmel
+Giddeus Butterfly
+
+# ============================================================================
+# ZULKHEIM / DERFLAND / VOLLBOW
+# ============================================================================
+Nocturnal Transients
+Bloody Bones
+Rampaging Ram
+Steelfleece Baldarich
+Vrock
+Lumbering Lambert
+Dune Widow
+Pelican
+Bigmouth Billy
+Bogy
+Dark Spark
+Vorpal Bunny
+Peko Peko
+Dust Devil
+Flame Skimmer
+Ellyllon
+Beach Monk
+Faerie Marbles
+Warchief Vatgit
+
+# ============================================================================
+# VALKURM / QUFIM / DELKFUTT
+# ============================================================================
+Valkurm Emperor
+Hurkan
+Snipper
+Slippery Sucker
+Atkorkamuy
+Ingaevon
+Dosetsu Tree
+Kraken
+Mushfiend
+Gigas Ascetic
+Chariotbuster Gaudestalt
+Sturdy Pyxis
+Atlas
+Snoll Tzar
+
+# ============================================================================
+# JUGNER / BATALLIA / ROLANBERRY / PASHHOW
+# ============================================================================
+Stray Mary
+Forest Tiger
+Golden Pastinaca
+Weeping Willow
+Giant Logger
+Carmine-Tailed Chapuli
+Enchanted Bones
+Lumber Jack
+Fossilet
+Fortalice
+Crawling Rock
+Jack-O-Lantern
+
+# ============================================================================
+# MERIPHATAUD / SAUROMUGUE / TAHRONGI
+# ============================================================================
+Weeper
+Ellyllwyr
+Spiny Spipi
+Wyvern Spearman
+Robber Crab
+Cactrot Rapido
+
+# ============================================================================
+# GARLAIGE CITADEL / CASTLE OZTROJA / DAVOI
+# ============================================================================
+Serket
+Mysticmaker Profblix
+Peketo the Rockslinger
+Haty
+Flesh Eater
+Mee Deggi the Punisher
+Quu Domi the Gallant
+Tee Kaza the Weaver
+Nue
+Mama Wraith
+Four-Armed Mage
+Hoo Mjuu the Torrent
+Lv.3 Dark Spark
+Suuo Zhuo the Phantom
+Fenrir (Full Moon Fountain)
+Dullahan
+
+# ============================================================================
+# MAZE OF SHAKHRAMI
+# ============================================================================
+Argus
+Leech King
+Jahsat Firestarter
+
+# ============================================================================
+# YUHTUNGA / YHOATOR / KORROLOKA / ELSHIMO
+# ============================================================================
+Mindseeker
+Lord of Onzozo
+Katzpur
+Dark Guardian
+Mother Globe
+Tabris
+Goldenclaw
+Taxim
+Krabkatoa
+Lumbering Lambert
+Delta Ladybug
+
+# ============================================================================
+# ALTEPA / KUFTAL / BIBIKI / BOYAHDA
+# ============================================================================
+Sabotender Bailador
+Sabotender Corrido
+King Vinegarroon
+Simurgh
+Antican Praetor
+Toad-in-the-Hole
+Ose
+Ellylon
+Warchief Vatgit
+
+# ============================================================================
+# BEAUCEDINE / XARCABARD / PSO'XJA / BEHEMOTH
+# ============================================================================
+White Coney
+Panzer Percival
+Dragua
+Sewer Syrup
+Jaizuhne
+Avatar
+King Behemoth
+Behemoth
+
+# ============================================================================
+# DRAGON'S AERY / RO'MAEVE / UGGALEPIH
+# ============================================================================
+Fafnir
+Nidhogg
+Vinegarroon
+Tiamat
+Jormungand
+Vrtra
+Charybdis
+Faust
+
+# ============================================================================
+# SKY (SHRINE OF RU'AVITAU)
+# ============================================================================
+Kirin
+Byakko
+Suzaku
+Seiryu
+Genbu
+Faust
+
+# ============================================================================
+# GROUND KINGS (world-spawn HNMs)
+# ============================================================================
+Adamantoise
+Aspidochelone
+
+# ============================================================================
+# ToAU (comment out if your server is RoZ/CoP only)
+# ============================================================================
+Lamia No.9
+Troll Bombardier
+Nunyunuwi
+Imdugud
+Hazhdiha
+Mahjlaef the Paintorn
+Serket
+Tinnin
+Khimaira 13
+Iron Giant
