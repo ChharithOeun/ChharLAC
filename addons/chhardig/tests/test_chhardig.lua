@@ -175,6 +175,54 @@ assertTrue('staff: Mogli',   set['mogli'])
 assertTrue('staff: Afni (current %a+ behavior)', set['afni'])
 
 -- ---------------------------------------------------------------------------
+-- 6) M3: settings serialize + load round-trip
+-- Mirrors the format chhardig.lua writes.  Writes a sample file, dofile()s
+-- it back, and verifies every whitelisted key round-trips, including
+-- numeric-key arrays (break_every_min).
+-- ---------------------------------------------------------------------------
+local function _ser(v, indent)
+    indent = indent or ''
+    local t = type(v)
+    if t == 'string' then return string.format('%q', v) end
+    if t == 'number' or t == 'boolean' then return tostring(v) end
+    if t == 'table' then
+        local parts = { '{' }
+        local nin = indent .. '  '
+        local n = #v
+        if n > 0 then
+            for i=1,n do parts[#parts+1] = nin .. _ser(v[i], nin) .. ',' end
+        else
+            for k, vv in pairs(v) do
+                parts[#parts+1] = nin .. ('[%q] = %s,'):format(tostring(k), _ser(vv, nin))
+            end
+        end
+        parts[#parts+1] = indent .. '}'
+        return table.concat(parts, '\n')
+    end
+    return 'nil'
+end
+local sample = {
+    paranoia='max', suspicion_cap=2, auto_logout=true,
+    greens_floor=5, ride_min_floor=5,
+    break_every_min={45,75}, break_dur_min={7,14},
+    cast_jitter_pct=0.20, distraction_rate=0.15, long_lapse_rate=0.02,
+    staff_names='Prinny, Mogli', debug=false,
+}
+local tmp = '/tmp/chhardig-settings-test.lua'
+local f = io.open(tmp, 'w'); f:write('return {\n')
+for k, v in pairs(sample) do f:write(('  [%q] = %s,\n'):format(k, _ser(v, '  '))) end
+f:write('};\n'); f:close()
+local ok, loaded = pcall(dofile, tmp)
+assertTrue('M3: settings file load', ok, tostring(loaded))
+assertEq('M3: paranoia round-trip', loaded.paranoia, 'max')
+assertEq('M3: suspicion_cap round-trip', loaded.suspicion_cap, 2)
+assertEq('M3: auto_logout round-trip', loaded.auto_logout, true)
+assertEq('M3: break_every_min[1] round-trip', loaded.break_every_min[1], 45)
+assertEq('M3: break_every_min[2] round-trip', loaded.break_every_min[2], 75)
+assertEq('M3: staff_names round-trip', loaded.staff_names, 'Prinny, Mogli')
+assertEq('M3: cast_jitter_pct round-trip', loaded.cast_jitter_pct, 0.20)
+
+-- ---------------------------------------------------------------------------
 -- Report
 -- ---------------------------------------------------------------------------
 local n_pass, n_fail = 0, 0

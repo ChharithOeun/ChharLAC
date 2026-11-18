@@ -77,6 +77,88 @@ local defaults = T{
 local settings = defaults:copy(true);
 
 -- ============================================================================
+-- M3 fix (audit 2026-11-17): settings persistence.
+-- Previously defaults:copy(true) ran every load and every UI/command edit
+-- evaporated on unload.  Now we persist a whitelist of user-tunable keys
+-- to config/addons/chhardig/settings_<pid>.lua (per-character, matching
+-- the waypoint save layout).  Transient state (`enabled`) and deprecated
+-- keys (`exit_route`) are NOT persisted.
+-- ============================================================================
+local SETTINGS_KEYS = {
+    'paranoia', 'suspicion_cap', 'auto_logout',
+    'greens_floor', 'ride_min_floor',
+    'break_every_min', 'break_dur_min',
+    'cast_jitter_pct', 'distraction_rate', 'long_lapse_rate',
+    'staff_names', 'debug',
+};
+local _settings_path = nil;
+local function settings_path()
+    if (_settings_path) then return _settings_path; end
+    local okP, party = pcall(function()
+        return AshitaCore:GetMemoryManager():GetParty();
+    end);
+    local pid = (okP and party) and party:GetMemberServerId(0) or 0;
+    local base = AshitaCore:GetInstallPath() .. 'config/addons/chhardig/';
+    pcall(ashita.fs.create_directory, base);
+    _settings_path = base .. ('settings_%d.lua'):format(pid);
+    return _settings_path;
+end
+
+local function _serialize(v, indent)
+    indent = indent or '';
+    local t = type(v);
+    if (t == 'string') then return string.format('%q', v); end
+    if (t == 'number' or t == 'boolean') then return tostring(v); end
+    if (t == 'table') then
+        local parts = { '{' };
+        local nin = indent .. '  ';
+        -- Numeric keys first (for arrays like break_every_min)
+        local n = #v;
+        if (n > 0) then
+            for i = 1, n do
+                parts[#parts+1] = nin .. _serialize(v[i], nin) .. ',';
+            end
+        else
+            for k, vv in pairs(v) do
+                parts[#parts+1] = nin .. ('[%q] = %s,'):format(
+                    tostring(k), _serialize(vv, nin));
+            end
+        end
+        parts[#parts+1] = indent .. '}';
+        return table.concat(parts, '\n');
+    end
+    return 'nil';
+end
+
+local function save_settings()
+    local p = settings_path();
+    local f = io.open(p, 'w');
+    if (not f) then return false, 'cannot open ' .. p; end
+    f:write('-- chhardig settings -- do not edit while addon is loaded\n');
+    f:write('return {\n');
+    for _, k in ipairs(SETTINGS_KEYS) do
+        if (settings[k] ~= nil) then
+            f:write(('  [%q] = %s,\n'):format(k, _serialize(settings[k], '  ')));
+        end
+    end
+    f:write('};\n');
+    f:close();
+    return true;
+end
+
+local function load_settings()
+    local p = settings_path();
+    local f = io.open(p, 'r');
+    if (not f) then return; end
+    f:close();
+    local ok, data = pcall(dofile, p);
+    if (not ok or type(data) ~= 'table') then return; end
+    for _, k in ipairs(SETTINGS_KEYS) do
+        if (data[k] ~= nil) then settings[k] = data[k]; end
+    end
+end
+
+-- ============================================================================
 -- State
 -- ============================================================================
 local state = {
@@ -617,8 +699,9 @@ ashita.events.register('command', 'chhardig_cmd', function(e)
         local parts = {}; for i = 3, #args do parts[#parts+1] = args[i]; end
         settings.staff_names = table.concat(parts, ' ');
         rebuild_staff();
+        save_settings();
         local n = 0; for _ in pairs(staff_set) do n = n + 1; end
-        echo(('%d staff names loaded'):format(n));
+        echo(('%d staff names loaded (persisted)'):format(n));
         return;
     end
     if (sub == 'paranoia' and args[3]) then
@@ -635,12 +718,14 @@ ashita.events.register('command', 'chhardig_cmd', function(e)
             settings.break_every_min = { 60, 90 };
             settings.auto_logout = false;
         end
-        echo('paranoia: ' .. p);
+        save_settings();
+        echo('paranoia: ' .. p .. ' (persisted)');
         return;
     end
     if (sub == 'debug') then
         settings.debug = not settings.debug;
-        echo('debug: ' .. tostring(settings.debug));
+        save_settings();
+        echo('debug: ' .. tostring(settings.debug) .. ' (persisted)');
         return;
     end
     warn('unknown subcommand: ' .. sub);
@@ -759,6 +844,7 @@ local function build_ctx()
             set_staff       = function(csv)
                 settings.staff_names = csv or '';
                 rebuild_staff();
+                save_settings();
             end,
             set_paranoia    = function(p)
                 settings.paranoia = p;
@@ -773,6 +859,7 @@ local function build_ctx()
                     settings.break_every_min  = { 60, 90 };
                     settings.auto_logout      = false;
                 end
+                save_settings();
             end,
         },
     };
@@ -795,6 +882,7 @@ end);
 
 ashita.events.register('load', 'chhardig_load', function()
     path.load();
+    load_settings();         -- M3: pick up persisted user prefs
     rebuild_staff();
     schedule_next_break();
     schedule_next_dig();
@@ -802,5 +890,9 @@ ashita.events.register('load', 'chhardig_load', function()
     echo(('v%s loaded. UI shown. /chd hide to hide, /chd help for commands.'):format(addon.version));
 end);
 ashita.events.register('unload', 'chhardig_unload', function()
+    -- M3: final save catches any UI-slider edits that didn't go through
+    -- an explicit mutator (greens_floor, ride_min_floor, auto_logout
+    -- checkbox, debug checkbox).
+    pcall(save_settings);
     -- H3: no more held VK_W to release.  No-op kept for symmetry.
 end);
