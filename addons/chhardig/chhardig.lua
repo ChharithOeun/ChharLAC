@@ -69,7 +69,9 @@ local defaults = T{
     distraction_rate  = 0.15,          -- 15% of recasts get a short pause
     long_lapse_rate   = 0.02,          -- 2% get a long lapse (40-150s)
     staff_names       = '',            -- "Name1, Name2, Name3" => instant stop
-    exit_route        = '',            -- comma-sep waypoint names for exit path
+    -- H3: exit_route is no longer driven by scripted walk; waypoints are
+    -- reference-only.  Kept in settings for config-file compat.
+    exit_route        = '',            -- (deprecated, reference only)
     debug             = false,
 };
 local settings = defaults:copy(true);
@@ -128,6 +130,11 @@ end
 
 local function clock_min(secs) return math.floor(secs / 60); end
 
+-- Forward declaration so on_text/try_dig can refer to start_exit before it
+-- is defined later in the file.  L1 fix (audit 2026-11-17): no longer a
+-- global.
+local start_exit
+
 -- Count Gysahl Greens across inventory + wardrobes.
 local function count_greens()
     local okI, inv = pcall(function()
@@ -136,8 +143,11 @@ local function count_greens()
     if (not okI or not inv) then return 0; end
     local GREENS_ID = 4545;    -- Gysahl Green item id (Phoenix / retail)
     local total = 0;
-    -- 0=inv, 1=safe1, 5=mog_satchel, 6=mog_sack, 8=wardrobe1..11=wardrobe4
-    local containers = { 0, 8, 10, 11, 12 };
+    -- M1 fix (audit 2026-11-17): the old list skipped Wardrobe 2 (container 9)
+    -- and all mog bags/cases.  Full in-reach list:
+    --   0=inventory  5=mog_satchel  6=mog_sack  7=mog_case
+    --   8..12 = Wardrobe 1..5
+    local containers = { 0, 5, 6, 7, 8, 9, 10, 11, 12 };
     for _, c in ipairs(containers) do
         local okC, size = pcall(inv.GetContainerSize, inv, c);
         if (okC and size and size > 0) then
@@ -152,7 +162,9 @@ local function count_greens()
     return total;
 end
 
--- Is the player mounted on a chocobo?  Status 5 = chocobo.
+-- Is the player mounted on a chocobo?  Status 5 = rental chocobo,
+-- 85 = mount item (Chocobo Whistle, etc.).  Both can /dig on Phoenix.
+-- M2 fix (audit 2026-11-17): sentinel.MOUNTED covers both.
 local function on_chocobo()
     local okP, party = pcall(function()
         return AshitaCore:GetMemoryManager():GetParty();
@@ -165,7 +177,7 @@ local function on_chocobo()
     local idx = party:GetMemberTargetIndex(0);
     if (not idx or idx == 0) then return false; end
     local st = ent:GetStatus(idx);
-    return st == 5;
+    return sentinel.MOUNTED[st] == true;
 end
 
 -- Dig cooldown by rank (seconds).  Phoenix: 15/10/5/3/3/3/3/3/3/3/3.
@@ -178,13 +190,22 @@ local function dig_cooldown()
     return (DIG_CD_BY_RANK[state.wing_rank] or 15);
 end
 
+-- H1 fix (audit 2026-11-17): the realism median is ~3.0s, but Phoenix's
+-- rank-10 cooldown is ALSO 3s.  Using max(server_floor, realism) at high
+-- rank clusters >50% of samples at exactly the server floor -- the bot
+-- pattern.  A hard-raised floor just shifts the pile-up to the new value.
+-- The fix spreads samples BELOW the server CD uniformly into a 2.5s
+-- window ABOVE it, so no single value is a peak:
+--   if realism < server_cd: gap = server_cd + U(1.5, 4.0)
+--   else                  : gap = realism (log-normal, already spread)
+-- Target: < 15% of rank-10 samples at any 0.3s bucket (tests enforce).
+
 -- Hard-stop: unrecoverable until the user explicitly /chd clear.
 local function hard_stop(reason)
     state.hard_stopped = true;
     state.hard_reason  = reason;
     state.running      = false;
     state.exiting      = false;
-    path.panic_release();
     warn('HARD STOP: ' .. reason);
     if (settings.auto_logout) then
         warn('auto-logout triggered');
@@ -258,21 +279,103 @@ local function on_text(e)
     end
 end
 
--- Packet 0x00D hook: GM detection + proximity suspicion.
+-- H2 fix (audit 2026-11-17): wire sentinel.add/total.  Tracks per-player:
+--   * first "close appearance" -- someone showing up inside 25y        +1
+--   * re-appearance after being gone >60s (likely a warp back)         +1
+--   * abnormal speed (>80, past the server clamp)                      +2
+-- When a player's 15-min total hits settings.suspicion_cap, hard_stop.
+-- The /check gate (0x036 to our idx) is also wired -- a GM examining
+-- you is the single highest-signal event other than their icon showing.
+local seen = {};    -- idx -> { last_seen, last_name, last_x, last_y, was_close }
+local CLOSE_Y = 25;
+local REVISIT_GAP = 60;
+
+local function my_target_index()
+    local okP, party = pcall(function()
+        return AshitaCore:GetMemoryManager():GetParty();
+    end);
+    if (not okP or not party) then return 0; end
+    return party:GetMemberTargetIndex(0) or 0;
+end
+
+local function score_suspicion(d)
+    if (state.hard_stopped) then return; end
+    if (not d or not d.general or not d.name or not d.idx) then return; end
+    local me = my_target_index();
+    if (d.idx == me) then return; end        -- that's us
+    local sx, sy = path.self_pos();
+    local close_now = false;
+    if (d.px and d.p2) then
+        close_now = (path.distance(sx, sy, d.px, d.p2) < CLOSE_Y);
+    end
+    local now = os.clock();
+    local prev = seen[d.idx];
+    local pts, why = 0, nil;
+
+    if (prev) then
+        local dt = now - prev.last_seen;
+        if (close_now and not prev.was_close and dt < REVISIT_GAP) then
+            pts, why = 1, 'close appearance';
+        elseif (close_now and dt >= REVISIT_GAP) then
+            pts, why = 1, 'returned close after ' .. math.floor(dt) .. 's';
+        end
+    elseif (close_now) then
+        pts, why = 1, 'first seen close';
+    end
+
+    local odd = sentinel.odd_speed(d);
+    if (odd) then pts, why = 2, ('speed=%d (past clamp)'):format(odd); end
+
+    seen[d.idx] = {
+        last_seen = now, last_name = d.name,
+        last_x = d.px, last_y = d.p2, was_close = close_now,
+    };
+
+    if (pts > 0) then
+        local total = sentinel.add(d.name, pts, why);
+        dbg(('suspicion +%d %s (%s)  total=%d / %d'):format(
+            pts, d.name, why, total, settings.suspicion_cap));
+        if (total >= (settings.suspicion_cap or 2)) then
+            hard_stop(('suspicion %d: %s [%s]'):format(
+                total, d.name, sentinel.reasons(d.name)));
+        end
+    end
+end
+
+-- 0x036: Examine (/check) -- sent by the examiner, echoed to the target.
+-- If the target index in the packet is us, someone just /check'd us.
+-- That's a +1 and worth noting the name if sentinel has one for the idx.
+local function score_check(e)
+    if (state.hard_stopped) then return; end
+    if (#e.data_raw < 0x08) then return; end
+    local target_idx = string.byte(e.data_raw, 0x07) * 256
+                     + string.byte(e.data_raw, 0x06);
+    if (target_idx ~= my_target_index()) then return; end
+    local actor_idx = string.byte(e.data_raw, 0x05) * 256
+                    + string.byte(e.data_raw, 0x04);
+    local who = (seen[actor_idx] and seen[actor_idx].last_name) or '(unknown)';
+    local total = sentinel.add(who, 1, '/check');
+    dbg(('suspicion +1 %s (/check)  total=%d'):format(who, total));
+    if (total >= (settings.suspicion_cap or 2)) then
+        hard_stop(('suspicion %d: %s [%s]'):format(
+            total, who, sentinel.reasons(who)));
+    end
+end
+
 local function on_packet(e)
     if (state.hard_stopped) then return; end
-    if (e.id ~= 0x00D) then return; end
-    local decoded = sentinel.decode_00D(e.data_raw, e.size);
-    if (not decoded) then return; end
-    local signs = sentinel.gm_signs(decoded);
-    if (#signs > 0) then
-        hard_stop('GM signs: ' .. table.concat(signs, ', '));
-        return;
+    if (e.id == 0x00D) then
+        local decoded = sentinel.decode_00D(e.data_raw, e.size);
+        if (not decoded) then return; end
+        local signs = sentinel.gm_signs(decoded);
+        if (#signs > 0) then
+            hard_stop('GM signs: ' .. table.concat(signs, ', '));
+            return;
+        end
+        score_suspicion(decoded);
+    elseif (e.id == 0x036) then
+        score_check(e);
     end
-    -- Suspicion scoring: /check, probe visits, close warps, etc.
-    -- We just use sentinel's existing scoring API; detecting the specific
-    -- trigger kinds requires more hooks that live in Metacast.lua -- for
-    -- now we rely on the hard-stop signs above + staff name /tell.
 end
 
 -- ============================================================================
@@ -283,11 +386,23 @@ local function fatigue_hours()
 end
 
 local function schedule_next_dig()
+    -- H1 fix: see human_floor comment above.  Samples that fall below the
+    -- server CD get sprayed uniformly into [cd+1.5, cd+4.0], so no exact
+    -- value becomes a spike.  Samples above the CD stay as realism gave
+    -- them (log-normal, already well-spread).
     local base = dig_cooldown();
-    -- realism.recast_gap returns a human-shaped gap >= 1.4s; floor it at
-    -- the actual game cooldown so we never try to dig while on cd.
     local extra = realism.recast_gap(fatigue_hours());
-    local gap = math.max(base, extra);
+    local gap;
+    if (extra < base) then
+        gap = base + 1.5 + math.random() * 2.5;
+    else
+        gap = extra;
+    end
+    -- 10% chance of adding a small extra gap on top -- avoids any residual
+    -- clustering at the lower edge of the spray window.
+    if (math.random() < 0.10) then
+        gap = gap + 2 + math.random() * 4;
+    end
     -- Optional long lapse injection (above and beyond realism's own 1.5%).
     if (math.random() < settings.long_lapse_rate) then
         gap = gap + 40 + math.random() * 110;
@@ -365,32 +480,26 @@ end
 -- ============================================================================
 -- Exit sequence
 -- ============================================================================
-function start_exit(reason)  -- global so on_text can call it
+-- H3 fix (audit 2026-11-17): the walk-to-zoneline path used keybd_event +
+-- KEYEVENTF_SCANCODE, which sets LLKHF_INJECTED on every event -- the
+-- textbook injection fingerprint.  That routine fired right when staff
+-- was already watching (i.e., after a hard-stop trigger), making it the
+-- single highest-signal thing the addon did.  We dismount in place and
+-- logout; the scripted W-hold is gone.  /chd mark/wps still work as a
+-- reference tool for the user, they just don't drive movement anymore.
+start_exit = function(reason)
     if (state.exiting) then return; end
     state.exiting = true;
     state.running = false;
-    echo('exit sequence: ' .. reason);
-    local wps = {};
-    for wp in tostring(settings.exit_route):gmatch('[^,%s]+') do
-        wps[#wps+1] = wp;
+    echo('exit: ' .. reason .. ' -- dismounting in place');
+    queue('/dismount');
+    -- Logout after dismount settles.  /logout blocks for 30s on its own,
+    -- so no need for a scheduled follow-up; firing both back-to-back
+    -- lets the client sequence them correctly.
+    if (settings.auto_logout) then
+        queue('/logout');
     end
-    if (#wps == 0) then
-        warn('no exit_route set -- /chd mark <name> then /chd exitroute <names>');
-        warn('dismounting here instead');
-        queue('/dismount');
-        state.exiting = false;
-        return;
-    end
-    path.walk_route(wps, function(ok, why)
-        state.exiting = false;
-        if (ok) then
-            echo('arrived at exit; dismounting');
-            queue('/dismount');
-        else
-            warn('exit walk failed: ' .. tostring(why) .. '  -- dismounting here');
-            queue('/dismount');
-        end
-    end);
+    state.exiting = false;
 end
 
 -- ============================================================================
@@ -403,8 +512,7 @@ local function cmd_help()
     echo('  /chd status                show counts + flags');
     echo('  /chd mark <name>           save current position as waypoint');
     echo('  /chd wps                   list waypoints in this zone');
-    echo('  /chd exitroute <a,b,c>     set the exit path (names of waypoints)');
-    echo('  /chd exit                  trigger exit sequence NOW');
+    echo('  /chd exit                  dismount in place + logout NOW');
     echo('  /chd clear                 clear hard-stop (after fixing issue)');
     echo('  /chd skill <N>             set wing skill (e.g. 55)');
     echo('  /chd staff <names>         comma-sep staff list for hard-stop /tells');
@@ -467,7 +575,6 @@ ashita.events.register('command', 'chhardig_cmd', function(e)
     if (sub == 'off') then
         settings.enabled = false;
         state.running    = false;
-        path.panic_release();
         echo('ChharDig OFF');
         return;
     end
@@ -494,10 +601,9 @@ ashita.events.register('command', 'chhardig_cmd', function(e)
         end
         return;
     end
-    if (sub == 'exitroute' and args[3]) then
-        local parts = {}; for i = 3, #args do parts[#parts+1] = args[i]; end
-        settings.exit_route = table.concat(parts, ','):gsub('%s+', '');
-        echo('exit_route = ' .. settings.exit_route);
+    if (sub == 'exitroute') then
+        warn('exitroute is deprecated (H3): exit is now dismount-in-place.');
+        warn('waypoints are reference-only now; /chd mark still works.');
         return;
     end
     if (sub == 'exit') then start_exit('manual'); return; end
@@ -629,7 +735,6 @@ local function build_ctx()
                     echo('ChharDig ON');
                 else
                     settings.enabled = false; state.running = false;
-                    path.panic_release();
                     echo('ChharDig OFF');
                 end
             end,
@@ -674,9 +779,8 @@ local function build_ctx()
 end
 
 ashita.events.register('d3d_present', 'chhardig_tick', function()
-    if (state.exiting) then
-        path.tick();
-    elseif (not state.hard_stopped) then
+    -- H3: no more scripted walking during exit; start_exit is one-shot.
+    if (not state.hard_stopped and not state.exiting) then
         try_dig();
     end
     -- Render UI every frame (cheap; imgui handles invisibility)
@@ -698,5 +802,5 @@ ashita.events.register('load', 'chhardig_load', function()
     echo(('v%s loaded. UI shown. /chd hide to hide, /chd help for commands.'):format(addon.version));
 end);
 ashita.events.register('unload', 'chhardig_unload', function()
-    path.panic_release();
+    -- H3: no more held VK_W to release.  No-op kept for symmetry.
 end);

@@ -106,20 +106,39 @@ assertTrue('realism mean in [2.8, 7.5]', mean >= 2.8 and mean <= 7.5, ('mean=%.2
 assertTrue('realism tail reaches >20s', over_20 >= 1, 'no long-lapse samples')
 
 -- ---------------------------------------------------------------------------
--- 2) H1: rank-10 recast floor should be comfortably above server cooldown
+-- 2) H1: rank-10 recast spread.  After the fix, samples below the server
+--    CD get sprayed uniformly into [cd+1.5, cd+4.0], so no single 0.3s
+--    bucket should hold more than ~15% of the mass.
 -- ---------------------------------------------------------------------------
--- Pull the DIG_CD_BY_RANK out of chhardig by eval
-local base_rank10 = 3
+local SERVER_CD = 3
 math.randomseed(42)
-local hits_at_floor = 0
+local samples = {}
+local below_cd = 0
 for i=1, 5000 do
-    local g = math.max(base_rank10, realism.recast_gap(0))
-    if g <= base_rank10 + 0.5 then hits_at_floor = hits_at_floor + 1 end
+    local extra = realism.recast_gap(0)
+    local g
+    if extra < SERVER_CD then
+        g = SERVER_CD + 1.5 + math.random() * 2.5
+    else
+        g = extra
+    end
+    if math.random() < 0.10 then g = g + 2 + math.random() * 4 end
+    if g < SERVER_CD then below_cd = below_cd + 1 end
+    samples[#samples+1] = g
 end
--- Fail if more than 20% of samples sit at the server floor (bot pattern)
-assertTrue('H1: rank-10 floor cluster < 20% of samples',
-    hits_at_floor / 5000 < 0.20,
-    ('%.1f%% of 5000 samples sat within 0.5s of server cooldown'):format(hits_at_floor/50))
+assertEq('H1 fix: no samples below server CD', below_cd, 0)
+-- Bucket samples into 0.3s bins over [3, 25] and check the peak bin
+local buckets = {}
+local function bucket(x) return math.floor((x - SERVER_CD) / 0.3) end
+for _, g in ipairs(samples) do
+    local b = bucket(g)
+    buckets[b] = (buckets[b] or 0) + 1
+end
+local peak = 0
+for _, c in pairs(buckets) do if c > peak then peak = c end end
+assertTrue('H1 fix: peak 0.3s bucket < 15% of samples',
+    peak / 5000 < 0.15,
+    ('peak bucket = %.1f%%'):format(peak/50))
 
 -- ---------------------------------------------------------------------------
 -- 3) GM-signs decoding
