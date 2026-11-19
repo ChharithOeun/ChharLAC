@@ -33,12 +33,24 @@ local Inst = {
     -- Lyre    = "Angel Lyre",       -- lvl ~50
 };
 
--- Runtime-togglable idle Range. Default = Cornette (no mid-song blink).
---   /lac fwd range <item>      -- swap (e.g. "/lac fwd range Animator")
---   /lac fwd range             -- show current
+-- Runtime idle Range.
+--   Default rule: sub /PUP -> Animator (for pet-ability use),
+--                 anything else -> Royal Spearman's Horn (song-safe).
+--   /lac fwd range <item>      -- manual override; wins until /lac fwd range auto
+--   /lac fwd range auto        -- clear override, return to the /PUP rule
+--   /lac fwd range             -- show current resolved value
 --   /lac fwd verbose on|off    -- echo swaps to chat (default: off)
-local idleRange = "Royal Spearman's Horn";
-local verbose   = false;
+local RANGE_DEFAULT   = "Royal Spearman's Horn";
+local RANGE_SUB_PUP   = "Animator";
+local rangeOverride   = nil;    -- non-nil = user forced a value via /lac fwd range
+local verbose         = false;
+
+local function resolveRange()
+    if (rangeOverride) then return rangeOverride; end
+    local ok, sub = pcall(function() return Sub.subJob(); end);
+    if (ok and sub == 'PUP') then return RANGE_SUB_PUP; end
+    return RANGE_DEFAULT;
+end
 
 -- ---------------------------------------------------------------------------
 -- IDLE sets -- base + sub-states
@@ -48,7 +60,7 @@ sets.Idle = {
     Body="Bard's Jstcorps", Hands="Bard's Cuffs", Ring1="Sniper's Ring", Ring2="Star Ring",
     Back="Rainbow Cape", Waist="Corsette +1", Legs="Bard's Cannions", Feet="Bard's Slippers",
     Main="Joyeuse", Sub="Genbu's Shield",
-    -- Range intentionally omitted here -- resolver injects idleRange below.
+    -- Range intentionally omitted here -- resolveRange() injects it below.
     
 };
 -- Sub-states layer on top of Idle (separate table -- Core resolver reads here,
@@ -220,14 +232,14 @@ end
 -- ---------------------------------------------------------------------------
 profile.HandleDefault = function()
     gFunc.EquipSet(Core.resolveIdle(sets));
-    gFunc.EquipSet({ Range = idleRange });   -- user-togglable Range
+    gFunc.EquipSet({ Range = resolveRange() });   -- /PUP -> Animator, else RSH
     Sub.tick(true);
     Core.trainTick();                        -- hidden skillup loop
 end
 
 profile.HandleEngaged = function()
     gFunc.EquipSet(Core.resolveTP(sets));
-    gFunc.EquipSet({ Range = idleRange });   -- carry user-togglable Range into TP too
+    gFunc.EquipSet({ Range = resolveRange() });   -- carry resolved Range into TP
     Sub.tick(true);
 end
 
@@ -264,15 +276,29 @@ profile.HandleCommand = function(args)
     if (Core.handleCommand(args)) then return; end
     if (Sub.handleCommand(args))  then return; end
     local cmd = args[1]:lower();
-    -- /lac fwd range <item>  (or no arg = show current)
+    -- /lac fwd range <item>  manual override (wins over sub-job rule)
+    -- /lac fwd range auto     clear override, return to /PUP->Animator else RSH
+    -- /lac fwd range          show current resolved value + any override
     if (cmd == 'range') then
         if (args[2]) then
-            idleRange = args[2];
-            -- Allow multi-word item names: "/lac fwd range Faerie Piccolo"
-            for i = 3, #args do idleRange = idleRange .. ' ' .. args[i]; end
-            if (verbose) then Core.echo('idle Range -> %s', idleRange); end
+            local a2 = args[2]:lower();
+            if (a2 == 'auto' or a2 == 'clear' or a2 == 'off' or a2 == 'reset') then
+                rangeOverride = nil;
+                Core.echo('idle Range override cleared; now %s', resolveRange());
+            else
+                local v = args[2];
+                for i = 3, #args do v = v .. ' ' .. args[i]; end   -- multi-word names
+                rangeOverride = v;
+                if (verbose) then Core.echo('idle Range override -> %s', v); end
+            end
         else
-            Core.echo('idle Range = %s', idleRange);   -- query always prints
+            if (rangeOverride) then
+                Core.echo('idle Range = %s  (override; /lac fwd range auto to clear)',
+                    rangeOverride);
+            else
+                Core.echo('idle Range = %s  (auto: sub /PUP -> Animator, else RSH)',
+                    resolveRange());
+            end
         end
         return;
     end
